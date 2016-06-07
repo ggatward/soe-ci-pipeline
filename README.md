@@ -39,12 +39,15 @@ NB I have SELinux disabled on the Jenkins server as I ran into too many problems
 #### Installation
 
 * From Satellite 6, provision a RHEL 7 server with a minimum of 4GB RAM and 50GB availabile in `/var/lib/jenkins`. The Jenkins host can be a VM.
-* Ensure that the Jenkins host is subscribed to the rhel-server-7-rpms and rhel-server-7-satellite-tools-rpms repositories.
-* Subscribe the server for to the EPEL and Jenkins repositories. If these are not available on your Satellite 6 server, use the following URLs: [EPEL](https://fedoraproject.org/wiki/EPEL) and [Jenkins](http://pkg.jenkins-ci.org/redhat/)
+* Ensure that the Jenkins host is subscribed to the rhel-server-7-rpms and rhel-server-7-satellite-tools-6.1-rpms repositories.
+* Subscribe the server for to the EPEL and Jenkins repositories. If these are not available on your Satellite 6 server, use the following URLs:
+EPEL https://fedoraproject.org/wiki/EPEL and Jenkins http://pkg.jenkins-ci.org/redhat/
 * Install `httpd`, `mock`, `createrepo`, `git`, `nc` and `puppet` on the system. Puppet should be installed during the provisioning process from Satellite 6, but if it is missing, install it here.
-`yum install -y httpd mock createrepo git nc puppet`
+
+    `yum install -y httpd mock createrepo git nc puppet`
 * Ensure that httpd is set to start automatically
-`systemctl enable httpd; systemctl start httpd`
+
+    `systemctl enable httpd; systemctl start httpd`
 * Configure `mock` by copying the [rhel-7-x86_64.cfg](https://github.com/ggatward/soe-ci-pipeline/master/rhel-7-x86_64.cfg) file to `/etc/mock` on the jenkins server, and linking ensuring that the link `/etc/mock/default.cfg` points to it.
     * edit the file and replace the placeholder `YOUROWNKEY` with your key as found in the `/etc/yum.repos.d/redhat.repo` file on the Jenkins server.
     * make sure the baseurl points at your Satellite server. The easiest way to do this is to just copy the relevant repo blocks from the Jenkins server's `/etc/yum.repos.d/redhat.repo`
@@ -52,7 +55,7 @@ NB I have SELinux disabled on the Jenkins server as I ran into too many problems
       `https://cdn.redhat.com`
 
 
-
+==================
 
 
 * Install `jenkins`, `tomcat` and Java. If you have setup the Jenkins repo correctly you should be able to simply use yum.

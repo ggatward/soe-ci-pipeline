@@ -3,8 +3,11 @@ node {
    build 'SOE/GIT_Checkout'
 
    stage 'Push Kickstarts'
-   build 'SOE/Build_Kickstarts'
+   build 'SOE/Push_Kickstarts'
 
-   stage '3'
-   echo 'boo'
+   stage 'Build Test VMs'
+   echo 'Not yet written'
+
+   stage 'Functional Tests'
+   echo 'Not yet written'
 }

@@ -33,7 +33,7 @@ function err() {
 
 # Name of file where modified content artefacts are being tracked
 # This approach (and file) is only used if CONDITIONAL_VM_BUILD is 'true'
-#MODIFIED_CONTENT_FILE=${WORKSPACE}/modified_content.track
+MODIFIED_CONTENT_FILE=${WORKSPACE}/modified_content.track
 
 # get our test machines into an array variable TEST_VM_LIST
 #function get_test_vm_list() {

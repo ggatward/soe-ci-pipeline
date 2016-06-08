@@ -6,7 +6,7 @@ node {
    build 'SOE/Push_Kickstarts'
 
    stage 'Build Test VMs'
-   echo 'Not yet written'
+   echo 'SOE/Build_Test_VMs'
 
    stage 'Functional Tests'
    echo 'Not yet written'

@@ -1,0 +1,5 @@
+SATELLITE=sat6.home.gatwards.org
+KNOWN_HOSTS=/var/lib/jenkins/.ssh/known_hosts
+RSA_ID=/var/lib/jenkins/.ssh/id_rsa
+PUSH_USER=jenkins
+

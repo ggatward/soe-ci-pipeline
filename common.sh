@@ -36,13 +36,13 @@ function err() {
 MODIFIED_CONTENT_FILE=${WORKSPACE}/modified_content.track
 
 # get our test machines into an array variable TEST_VM_LIST
-#function get_test_vm_list() {
-#	local J=0
-#	for I in $(ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
-#		"hammer content-host list --organization \"${ORG}\" \
-#			--host-collection \"$TESTVM_HOSTCOLLECTION\" \
-#		| tail -n +4 | cut -f2 -d \"|\" | head -n -1")
-#	do
+function get_test_vm_list() {
+	local J=0
+	for I in $(ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
+		"hammer content-host list --organization \"${ORG}\" \
+			--host-collection \"$TESTVM_HOSTCOLLECTION\" \
+		| tail -n +4 | cut -f2 -d \"|\" | head -n -1")
+	do
 #		# If CONDITIONAL_VM_BUILD is 'true', only keep VMs commented
 #		# with modified #content# as listed in $MODIFIED_CONTENT_FILE
 #		# If the file is empty or doesn't exist, we test everything
@@ -54,8 +54,8 @@ MODIFIED_CONTENT_FILE=${WORKSPACE}/modified_content.track
 #				| grep "^Comment:" \
 #				| grep -Fqf "${MODIFIED_CONTENT_FILE}"
 #		then
-#			TEST_VM_LIST[$J]=$I
-#			((J+=1))
+			TEST_VM_LIST[$J]=$I
+			((J+=1))
 #		fi
-#	done
-#}
+	done
+}

@@ -1,4 +1,4 @@
-ORG=DIG
+ORG=GatwardIT
 SATELLITE=sat6.home.gatwards.org
 TESTVM_HOSTCOLLECTION='Jenkins Test VMs'
 KNOWN_HOSTS=/var/lib/jenkins/.ssh/known_hosts

@@ -19,9 +19,10 @@ fi
 
 get_test_vm_list # populate TEST_VM_LIST
 
-# TODO: Error out if no test VM's are available.
+# Error out if no test VM's are available.
 if [ $(echo ${#TEST_VM_LIST[@]}) -eq 0 ]; then
   err "No test VMs configured in Satellite"
+  exit ${WORKSPACE_ERR}
 fi
 
 # rebuild test VMs
@@ -34,9 +35,10 @@ do
     _PROBED_STATUS=$(ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} "hammer host status --id $I" | grep Power | cut -f2 -d: | tr -d ' ')
 
     # different hypervisors report power status with different words. parse and get a single word per status
-    # KVM uses running / shutoff
-    # VMware uses poweredOn / poweredOff
-    # add other hypervisors as you come across them and please submit to https://github.com/RedHatEMEA/soe-ci
+    # - KVM uses running / shutoff
+    # - VMware uses poweredOn / poweredOff
+    # - libvirt uses up / down
+    # add others as you come across them and please submit to https://github.com/ggatward/soe-ci-pipeline
 
     case "${_PROBED_STATUS}" in
       running)

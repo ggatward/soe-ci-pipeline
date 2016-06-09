@@ -23,13 +23,19 @@ while [[ ${buildvm} = true ]]; do
        grep -e \"Managed.*true\" -e \"Enabled.*true\" -e \"Build.*false\" | wc -l")
   # Check if status is OK, ping reacts and SSH is there, then success!
   if [[ ${status} == 3 ]] && ping -c 1 -q $TESTVM && nc -w 1 $TESTVM 22; then
-    tell "Success!"
-    unset buildvm
+    # A PXE install takes at least 5 minutes. Detect if the VM simply rebooted without
+    #   rebuilding and return a fail if it did.
+    if [[ ${WAIT} -lt 300 ]]; then
+      err "Test server looks to have simply rebooted without rebuilding. Exiting."
+      exit 1
+    else
+      tell "Success!"
+      unset buildvm
+    fi
   else
     tell "Not yet."
   fi
-  if [[ ${WAIT} -gt 6000 ]]
-  then
+  if [[ ${WAIT} -gt 6000 ]]; then
     err "Test servers still not rebuilt after 6000 seconds. Exiting."
     exit 1
   fi

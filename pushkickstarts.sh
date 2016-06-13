@@ -34,8 +34,10 @@ rsync -td --out-format="#%n#" --delete-excluded --include=*.erb --exclude=* "${w
 
 # sync our kickstart artefect dir with the one in our homedir on Satellite. We delete extraneous 
 # kickstarts on the satellite so that we don't keep pushing obsolete kickstarts into satellite
+#rsync --delete -va -e "ssh -l ${PUSH_USER} -i /var/lib/jenkins/.ssh/id_rsa" -va \
+#    ${ARTEFACTS} ${SATELLITE}:kickstarts
 rsync --delete -va -e "ssh -l ${PUSH_USER} -i /var/lib/jenkins/.ssh/id_rsa" -va \
-    ${ARTEFACTS} ${SATELLITE}:kickstarts
+    ${ARTEFACTS} ${SATELLITE}:
 
 # either update or create each kickstart in turn
 cd ${ARTEFACTS}

@@ -4,5 +4,3 @@ TESTVM_HOSTCOLLECTION=Jenkins Test VMs
 KNOWN_HOSTS=/var/lib/jenkins/.ssh/known_hosts
 RSA_ID=/var/lib/jenkins/.ssh/id_rsa
 PUSH_USER=jenkins
-TEST_ROOT=ChangeMe
-

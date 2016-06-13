@@ -25,13 +25,13 @@ while [[ ${buildvm} = true ]]; do
   if [[ ${status} == 3 ]] && ping -c 1 -q $TESTVM && nc -w 1 $TESTVM 22; then
     # A PXE install takes at least 5 minutes. Detect if the VM simply rebooted without
     #   rebuilding and return a fail if it did.
-    if [[ ${WAIT} -lt 300 ]]; then
-      err "Test server looks to have simply rebooted without rebuilding. Exiting."
-      exit 1
-    else
+#    if [[ ${WAIT} -lt 300 ]]; then
+#      err "Test server looks to have simply rebooted without rebuilding. Exiting."
+#      exit 1
+#    else
       tell "Success!"
       unset buildvm
-    fi
+#    fi
   else
     tell "Not yet."
   fi

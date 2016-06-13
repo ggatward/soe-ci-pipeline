@@ -1,0 +1,7 @@
+---
+:cachedir: /var/cache/r10k
+:sources:
+  :RHEL_SOE:
+    remote: https://github.com/ggatward/RHEL-SOE-puppet
+    basedir: /etc/puppet/environments
+    prefix: true

@@ -14,7 +14,7 @@ fi
  
 # Push the r10k.yaml config from our GIT repo over to Satellite
 rsync --delete -va -e "ssh -l ${PUSH_USER} -i /var/lib/jenkins/.ssh/id_rsa" -va \
-    ${WORKSPACE}/scripts/y10k.yaml ${SATELLITE}:
+    ${WORKSPACE}/scripts/r10k.yaml ${SATELLITE}:
 
 # use hammer on the satellite to find all capsules. Then use R10K to push the modules
 # into the puppet environmnet on each capsule

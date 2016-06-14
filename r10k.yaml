@@ -1,5 +1,5 @@
 ---
-:cachedir: /var/cache/r10k
+:cachedir: /var/lib/jenkins/r10k-cache
 :sources:
   :RHEL_SOE:
     remote: https://github.com/ggatward/RHEL-SOE-puppet

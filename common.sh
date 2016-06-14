@@ -35,14 +35,3 @@ function err() {
 # This approach (and file) is only used if CONDITIONAL_VM_BUILD is 'true'
 MODIFIED_CONTENT_FILE=${WORKSPACE}/modified_content.track
 
-# get our test machines into an array variable TEST_VM_LIST
-#function get_test_vm_list() {
-#  local J=0
-#  for I in $(ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
-#      "hammer content-host list --organization \"${ORG}\" \
-#          --host-collection \"$TESTVM_HOSTCOLLECTION\" \
-#          | tail -n +4 | cut -f2 -d \"|\" | head -n -1"); do
-#    TEST_VM_LIST[$J]=$I
-#    ((J+=1))
-#  done
-#}

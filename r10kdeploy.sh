@@ -8,7 +8,7 @@
 . $(dirname "${0}")/common.sh
  
 if [[ -z ${PUSH_USER} ]] || [[ -z ${SATELLITE} ]] || [[ -z ${RSA_ID} ]]; then
-  err "PUSH_USER, R10K_USER or SATELLITE not set or not found"
+  err "PUSH_USER, SATELLITE or RSA_ID not set or not found"
   exit ${WORKSPACE_ERR}
 fi
  
@@ -25,22 +25,23 @@ ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
     "cd /etc/puppet ; r10k deploy environment ${R10K_ENV} -c /var/lib/jenkins/r10k.yaml -pv"
 
 # Need to fix perms post-deploy:
-#chown -R apache: ${BASEDIR}
+chown -R apache: ${BASEDIR}
 #restorecon -Fr ${BASEDIR}
 
 # Clone the updated directory to all capsules
 for I in $(ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
     "hammer --csv capsule list" | tail -n +2 | awk -F, '{print $2}'); do
-echo "*** DEBUG ***"
-echo "rsync --delete -va -e \"ssh -l ${PUSH_USER} -i ${RSA_ID}\" -va ${BASEDIR}/${R10K_ENV} ${I}:${BASEDIR}"
-#  rsync --delete -va -e "ssh -l ${PUSH_USER} -i ${RSA_ID}" -va ${BASEDIR}/${R10K_ENV} ${I}:${BASEDIR}
+  if [ "${I}" != "${SATELLITE}" ]; then
+    echo "*** DEBUG ***"
+    echo "rsync --delete -va -e \"ssh -l ${PUSH_USER} -i ${RSA_ID}\" -va ${BASEDIR}/${R10K_ENV} ${I}:${BASEDIR}"
+#    rsync --delete -va -e "ssh -l ${PUSH_USER} -i ${RSA_ID}" -va ${BASEDIR}/${R10K_ENV} ${I}:${BASEDIR}
+  fi
 done
-
 
 
 # See if the environent already exits:
 if [ $(ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
-    "hammer environment list | awk ' /^[0-9]/ { print $3 }' | grep ${R10K_ENV}") -eq 0 ]; then
+    "hammer environment list | awk ' /^[0-9]/ { print $3 }' | grep -c ${R10K_ENV}") -eq 0 ]; then
   ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
     "hammer environment create --name ${R10K_ENV} --locations 'Default Location' --organizations ${ORG}"
 fi

@@ -24,10 +24,11 @@ rsync --delete -va -e "ssh -l ${PUSH_USER} -i ${RSA_ID}" -va \
 ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
     "cd /etc/puppet ; r10k deploy environment ${R10K_ENV} -c /var/lib/jenkins/r10k.yaml -pv"
 
-# Need to fix perms post-deploy:
+# Need to fix perms post-deploy (Requires entries in /etc/sudoers.d/jenkins on Satellite)
 ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
-    "chown -R apache: ${BASEDIR}"
-#restorecon -Fr ${BASEDIR}
+    "sudo /bin/chown -R apache ${BASEDIR}"
+ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
+    "sudo /usr/sbin/restorecon -Fr ${BASEDIR}"
 
 # Clone the updated directory to all capsules
 for I in $(ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
@@ -45,6 +46,9 @@ if [ $(ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
       "hammer environment list | awk ' /^[0-9]/ { print $3 }' | grep -c ${R10K_ENV}") -eq 0 ]; then
   ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
       "hammer environment create --name ${R10K_ENV} --locations '${PUPPET_LOCATIONS}' --organizations ${ORG}"
+else
+  ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
+      "hammer environment update --name ${R10K_ENV} --locations '${PUPPET_LOCATIONS}' --organizations ${ORG}"
 fi
 
 # Import the puppet classes

@@ -24,6 +24,10 @@ rsync --delete -va -e "ssh -l ${PUSH_USER} -i ${RSA_ID}" -va \
 ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
     "cd /etc/puppet ; r10k deploy environment ${R10K_ENV} -c /var/lib/jenkins/r10k.yaml -pv"
 
+# Clean up extra non-puppet GIT atrefacts that are pulled by r10k
+ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
+    "cd ${BASEDIR}/${R10K_ENV}; rm -rf tests kickstarts LICENSE README.md"
+
 # Need to fix perms post-deploy (Requires entries in /etc/sudoers.d/jenkins on Satellite)
 #ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
 #    "sudo /bin/chown -R apache ${BASEDIR}"

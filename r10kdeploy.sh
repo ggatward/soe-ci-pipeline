@@ -25,10 +25,10 @@ ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
     "cd /etc/puppet ; r10k deploy environment ${R10K_ENV} -c /var/lib/jenkins/r10k.yaml -pv"
 
 # Need to fix perms post-deploy (Requires entries in /etc/sudoers.d/jenkins on Satellite)
-ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
-    "sudo /bin/chown -R apache ${BASEDIR}"
-ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
-    "sudo /usr/sbin/restorecon -Fr ${BASEDIR}"
+#ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
+#    "sudo /bin/chown -R apache ${BASEDIR}"
+#ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
+#    "sudo /usr/sbin/restorecon -Fr ${BASEDIR}"
 
 # Clone the updated directory to all capsules
 for I in $(ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \

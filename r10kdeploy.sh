@@ -25,7 +25,8 @@ ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
     "cd /etc/puppet ; r10k deploy environment ${R10K_ENV} -c /var/lib/jenkins/r10k.yaml -pv"
 
 # Need to fix perms post-deploy:
-chown -R apache: ${BASEDIR}
+ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
+    "chown -R apache: ${BASEDIR}"
 #restorecon -Fr ${BASEDIR}
 
 # Clone the updated directory to all capsules
@@ -41,12 +42,17 @@ done
 
 # See if the environent already exits:
 if [ $(ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
-    "hammer environment list | awk ' /^[0-9]/ { print $3 }' | grep -c ${R10K_ENV}") -eq 0 ]; then
+      "hammer environment list | awk ' /^[0-9]/ { print $3 }' | grep -c ${R10K_ENV}") -eq 0 ]; then
   ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
-    "hammer environment create --name ${R10K_ENV} --locations 'Default Location' --organizations ${ORG}"
+      "hammer environment create --name ${R10K_ENV} --locations '${PUPPET_LOCATIONS}' --organizations ${ORG}"
 fi
 
 # Import the puppet classes
 ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
-  "hammer proxy import-classes --id 1 --environment ${R10K_ENV}"
+    "hammer proxy import-classes --id 1 --environment ${R10K_ENV}"
+
+# Output to the logs all classes in the env
+ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
+    "hammer environment info --name ${R10K_ENV}"
+
 

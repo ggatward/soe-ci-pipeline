@@ -24,7 +24,7 @@ The CII system consists of the following components:
 * Optionally, one or more git repositories, containing custom (in-house) puppet modules.
 * A yum repository, containing custom (in-house) RPM packages.
 * A Jenkins instance. This is responsible for pushing artifacts into the Red Hat Satellite, and orchestrating and reporting tests.
-* The Jenkins instance can also be responsible for building artifacts such as RPMs and Puppet modules, and pushing those artifacts to the relevent repositories.
+* The Jenkins instance can also be responsible for building artifacts such as RPMs and Puppet modules, and pushing those artifacts to the relevent repositories (These builds are not covered by this project).
 * Red Hat Satellite 6. This acts as the repository for Red Hat-provided and 3rd party packages, kickstarts and puppet modules. Satellite is also used to deploy test clients.
 * A virtualisation infrastructure to run test clients. KVM/Libvirt, VMware and RHEV have all been used.
 * Optionally, A puppet-forge mirror. This provides access to puppet-forge modules if the environment is disconnected from the internet. In a disconnected environment, consider https://github.com/unibet/puppet-forge-server
@@ -56,23 +56,28 @@ EPEL https://fedoraproject.org/wiki/EPEL and Jenkins http://pkg.jenkins-ci.org/r
 
 ==================
 
-
 * Install `jenkins`, `tomcat` and Java. If you have setup the Jenkins repo correctly you should be able to simply use yum.
 * Start Jenkins and browse to the console at http://jenkinsserver:8080/
 * Select the 'Manage Jenkins' link, followed by 'Manage Plugins'. You will need to add the following plugins:
 
     * Environment Injector Plugin
-    * .
-    * .
+    * Build Pipeline plugin
+    * Clone Workspace SCM Plug-in
     * Git Plugin
     * Multiple SCMs Plugin
     * TAP Plugin
     * Post-Build Script Plug-in
     * Build Timeout Plug-in
-
+    * JobFanIn Plugin
+    * Version Number Plug-in
+    * Workspace Cleanup Plugin
 
 * Restart Jenkins
 * `su` to the `jenkins` user (`su jenkins -s /bin/bash`) and use `ssh-keygen` to create an ssh keypair. These will be used for authentication to both the git repository, and to the satellite server.
+
+
+
+
 
 
 * Create a build plan in Jenkins by creating the directory `/var/lib/jenkins/jobs/SOE` and copying in the  [config.xml] file
@@ -107,11 +112,10 @@ _Make sure to create a development branch of the RHEL-SOE and use that in Jenkin
 * Configure a Compute Resource on the satellite (libvirt, VMWare or RHEV). This will be used to deploy test machines.
 
 * Create a Lifecycle path for the SOE (Library -> SOE Test -> SOE Production)
-* Create a Content View called `Server SOE` that contains all required reqpositories for both RHEL 6 and RHEL 7, and publish this to the Library and the SOE Test environment. Be sure to include any custom repositories.
+* Create a Content View called `Server SOE` that contains all required repositories for both RHEL 6 and RHEL 7, and publish this to the Library and the SOE Test environment. Be sure to include any custom repositories.
 * Create an Activation Key for both RHEL 6 and RHEL 7, using the Content View from `SOE Test`
 * Create a hostgroup (I called mine 'Jenkins Test Servers') that deploys machines on to the Compute Resource that you configured earlier, and uses the activation key that you created. Create a default root password and make a note of it.
 * Create a couple of initial test servers on your defined Compute Resource and deploy them.
-
 
 
 These CII scripts use r10k to deploy puppet environments to the Satellite server. Further information on the configuration of r10k and Satellite 6 can be found at https://access.redhat.com/blogs/1169563/posts/2216351

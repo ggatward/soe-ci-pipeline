@@ -2,41 +2,25 @@
 <project>
   <actions/>
   <description></description>
+  <displayName>04: Reboot test VMs</displayName>
   <keepDependencies>false</keepDependencies>
   <properties/>
   <scm class="hudson.plugins.cloneworkspace.CloneWorkspaceSCM" plugin="clone-workspace-scm@0.6">
-    <parentJobName>SOE/GIT_Checkout</parentJobName>
+    <parentJobName>SOE/Development/GIT_Checkout</parentJobName>
     <criteria>Any</criteria>
   </scm>
   <canRoam>true</canRoam>
   <disabled>false</disabled>
-  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
-  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <triggers>
-    <jenkins.triggers.ReverseBuildTrigger>
-      <spec></spec>
-      <upstreamProjects>GIT_Checkout</upstreamProjects>
-      <threshold>
-        <name>SUCCESS</name>
-        <ordinal>0</ordinal>
-        <color>BLUE</color>
-        <completeBuild>true</completeBuild>
-      </threshold>
-    </jenkins.triggers.ReverseBuildTrigger>
-  </triggers>
+  <blockBuildWhenDownstreamBuilding>true</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>true</blockBuildWhenUpstreamBuilding>
+  <triggers/>
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
       <command>echo &quot;#####################################################&quot;
-echo &quot;#                BUILDING KICKSTARTS                #&quot;
+echo &quot;#                REBUILDING TEST VMS                #&quot;
 echo &quot;#####################################################&quot;
-/bin/bash -x ${WORKSPACE}/scripts/kickstartbuild.sh ${WORKSPACE}/soe/kickstarts
-
-echo &quot;#####################################################&quot;
-echo &quot;#           PUSH KICKSTARTS TO SATELLITE            #&quot;
-echo &quot;#####################################################&quot;
-/bin/bash -x ${WORKSPACE}/scripts/kickstartpush.sh ${WORKSPACE}/artefacts
-</command>
+/bin/bash -x ${WORKSPACE}/scripts/buildtestvms.sh </command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>

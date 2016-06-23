@@ -74,15 +74,42 @@ EPEL https://fedoraproject.org/wiki/EPEL and Jenkins http://pkg.jenkins-ci.org/r
 
 * Restart Jenkins
 * `su` to the `jenkins` user (`su jenkins -s /bin/bash`) and use `ssh-keygen` to create an ssh keypair. These will be used for authentication to both the git repository, and to the satellite server.
+* Create the project build plans in Jenkins by creating the directory `/var/lib/jenkins/jobs/SOE` and copying in the directory structure and config.xml files from the CI Git repo `jenkins-config` directory into it. The resulting structure should look like this:
+```
+.
+├── config.xml
+└── jobs
+    ├── Development
+    │   ├── config.xml
+    │   └── jobs
+    │       ├── Boot_Test_VMs
+    │       │   └── config.xml
+    │       ├── Build_RHEL6_Net1
+    │       │   └── config.xml
+    │       ├── Build_RHEL7_Net1
+    │       │   └── config.xml
+    │       ├── Deploy_Puppet_Modules
+    │       │   └── config.xml
+    │       ├── GIT_Checkout
+    │       │   └── config.xml
+    │       ├── Notify_Success
+    │       │   └── config.xml
+    │       ├── Push_Kickstarts
+    │       │   └── config.xml
+    │       ├── Test_RHEL6_Net1
+    │       │   └── config.xml
+    │       └── Test_RHEL7_Net1
+    │           └── config.xml
+    └── Production
+        ├── config.xml
+        └── jobs
+```
 
+This will give you a Jenkins Folder named SOE, containing a `Development` and a `Production` project. Each project contains a number of smaller projects that are chained together to form a pipeline - so we have a SOE project containing a Development pipeline and a Production pipeline.
 
-
-
-
-
-* Create a build plan in Jenkins by creating the directory `/var/lib/jenkins/jobs/SOE` and copying in the  [config.xml] file
-* Check that the build plan is visible and correct via the Jenkins UI, you will surely need to adapt the parameter values to your environment.
+* Check that the build plans are visible and correct via the Jenkins UI (We will need to edit parameters shortly).
     * you might need to reload the configuration from disk using 'Manage Jenkins -> Reload Configuration from Disk'.
+
 
 
 ### Git Repository

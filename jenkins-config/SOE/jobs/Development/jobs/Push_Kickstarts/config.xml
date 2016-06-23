@@ -2,38 +2,44 @@
 <project>
   <actions/>
   <description></description>
+  <displayName>02: Deploy kickstart files to Satellite</displayName>
   <keepDependencies>false</keepDependencies>
   <properties/>
   <scm class="hudson.plugins.cloneworkspace.CloneWorkspaceSCM" plugin="clone-workspace-scm@0.6">
-    <parentJobName>SOE/GIT_Checkout</parentJobName>
+    <parentJobName>SOE/Development/GIT_Checkout</parentJobName>
     <criteria>Any</criteria>
   </scm>
   <canRoam>true</canRoam>
   <disabled>false</disabled>
-  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
-  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <triggers>
-    <jenkins.triggers.ReverseBuildTrigger>
-      <spec></spec>
-      <upstreamProjects>Push_Kickstarts</upstreamProjects>
+  <blockBuildWhenDownstreamBuilding>true</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>true</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>echo &quot;#####################################################&quot;
+echo &quot;#                BUILDING KICKSTARTS                #&quot;
+echo &quot;#####################################################&quot;
+/bin/bash -x ${WORKSPACE}/scripts/pushkickstarts.sh ${WORKSPACE}/soe/kickstarts
+</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.BuildTrigger>
+      <childProjects>Deploy_Puppet_Modules</childProjects>
       <threshold>
         <name>SUCCESS</name>
         <ordinal>0</ordinal>
         <color>BLUE</color>
         <completeBuild>true</completeBuild>
       </threshold>
-    </jenkins.triggers.ReverseBuildTrigger>
-  </triggers>
-  <concurrentBuild>false</concurrentBuild>
-  <builders>
-    <hudson.tasks.Shell>
-      <command>echo &quot;#####################################################&quot;
-echo &quot;#                REBUILDING TEST VMS                #&quot;
-echo &quot;#####################################################&quot;
-/bin/bash -x ${WORKSPACE}/scripts/buildtestvms.sh </command>
-    </hudson.tasks.Shell>
-  </builders>
-  <publishers/>
+    </hudson.tasks.BuildTrigger>
+    <hudson.tasks.Mailer plugin="mailer@1.17">
+      <recipients>$EMAIL_TO</recipients>
+      <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
+      <sendToIndividuals>false</sendToIndividuals>
+    </hudson.tasks.Mailer>
+  </publishers>
   <buildWrappers>
     <hudson.plugins.ws__cleanup.PreBuildCleanup plugin="ws-cleanup@0.29">
       <deleteDirs>false</deleteDirs>

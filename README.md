@@ -60,6 +60,7 @@ EPEL https://fedoraproject.org/wiki/EPEL and Jenkins http://pkg.jenkins-ci.org/r
 * Start Jenkins and browse to the console at http://jenkinsserver:8080/
 * Select the 'Manage Jenkins' link, followed by 'Manage Plugins'. You will need to add the following plugins:
 
+    * Job DSL Plugin
     * Environment Injector Plugin
     * Build Pipeline plugin
     * Clone Workspace SCM Plug-in

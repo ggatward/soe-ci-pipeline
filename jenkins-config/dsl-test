@@ -1,0 +1,57 @@
+folder('SOE1') {
+  description('SOE Project')
+}
+
+folder('SOE1/Development') {
+  description('SOE Build in Development Environment')
+}
+
+folder('SOE1/Production') {
+  description('SOE Build in Production Environment')
+}
+
+freeStyleJob('SOE1/Development/GIT_Checkout1') {
+  properties {
+    buildDiscarder {
+      strategy {
+        logRotator {
+          numToKeepStr('5')
+          artifactDaysToKeepStr()
+          artifactNumToKeepStr()
+          daysToKeepStr()
+        }
+      }
+    }
+  }
+  multiscm {
+    git {
+      remote {
+        url('https://github.com/ggatward/soe-ci-pipeline')
+      }
+      branch('*/development')
+      createTag(false)
+      relativeTargetDir('scripts')
+    }
+    git {
+      remote {
+        url('https://github.com/ggatward/RHEL-SOE')
+      }
+      branch('*/development')
+      createTag(false)
+      relativeTargetDir('soe')
+    }
+  }
+  wrappers {
+    preBuildCleanup()
+    environmentVariables {
+      propertiesFile('scripts/PARAMETERS')
+    }
+  }
+  publishers {
+    downstream('SOE1/Push_Kickstarts', 'SUCCESS')
+    publishCloneWorkspace('**') {
+      criteria('Successful')
+    }
+    mailer('$EMAIL_TO', true, false)
+  }
+}

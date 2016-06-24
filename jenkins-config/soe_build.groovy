@@ -7,9 +7,9 @@ freeStyleJob('SOE1/Development/GIT_Checkout') {
       strategy {
         logRotator {
           numToKeepStr('5')
-          artifactDaysToKeepStr()
-          artifactNumToKeepStr()
-          daysToKeepStr()
+          artifactDaysToKeepStr('')
+          artifactNumToKeepStr('')
+          daysToKeepStr('')
         }
       }
     }

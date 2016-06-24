@@ -1,19 +1,4 @@
 /****************************************************************************
- * Create project folder structure
- ****************************************************************************/
-folder('SOE1') {
-  description('SOE Project')
-}
-
-folder('SOE1/Development') {
-  description('SOE Build in Development Environment')
-}
-
-folder('SOE1/Production') {
-  description('SOE Build in Production Environment')
-}
-
-/****************************************************************************
  * Create jobs
  ****************************************************************************/
 freeStyleJob('SOE1/Development/GIT_Checkout') {
@@ -64,10 +49,3 @@ freeStyleJob('SOE1/Development/GIT_Checkout') {
   }
 }
 
-/****************************************************************************
- * Create Views
- ****************************************************************************/
-buildPipelineView('SOE1 Dev pipeline') {
-  title 'Dev SOE build pipeline'
-  selectedJob 'SOE1/Development/GIT_Checkout'
-}

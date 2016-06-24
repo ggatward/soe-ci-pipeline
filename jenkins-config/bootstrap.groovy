@@ -1,12 +1,12 @@
 
-def ci-giturl = 'https://github.com/ggatward/soe-ci-pipeline'
-def soe-giturl = 'https://github.com/ggatward/RHEL-SOE'
+def ci_giturl = 'https://github.com/ggatward/soe-ci-pipeline'
+def soe_giturl = 'https://github.com/ggatward/RHEL-SOE'
 
 job("SOE seed job") {
   scm {
     git {
       remote {
-        url(ci-giturl)
+        url(ci_giturl)
       }
       branch('development')
       shallowClone(true)
@@ -14,7 +14,7 @@ job("SOE seed job") {
   }
   steps {
     dsl {
-      external('soe-*.groovy')
+      external('jenkins-config/soe_*.groovy')
       removeAction('DISABLE')
       removeViewAction('IGNORE')
     }

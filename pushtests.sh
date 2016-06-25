@@ -13,7 +13,7 @@ TESTVM=$1
 export SSH_ASKPASS=${WORKSPACE}/scripts/askpass.sh
 export DISPLAY=nodisplay
 # Root password for test host - Exists as a Jenkins env variable
-export TEST_ROOT
+export ROOTPASS
 
 # copy our tests to the test servers
 info "Setting up ssh keys for test server $TESTVM"

@@ -32,6 +32,9 @@ for (desc in hostMap.keySet()) {
         }
       }
     }
+    triggers {
+      upstream('Boot_Test_VMs', 'SUCCESS')
+    }
     scm {
       cloneWorkspaceSCM {
         parentJobName('SOE1/Development/GIT_Checkout')

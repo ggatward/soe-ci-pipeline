@@ -3,8 +3,8 @@
  * Format is 'Description':'hostname'
  *******************************************************************/
 def hostMap = [
-  'Net1 RHEL7':'buildbot1.lab.home.gatwards.org', 
-  'Net1 RHEL6':'buildbot2.lab.home.gatwards.org',
+  'Net1_RHEL7':'buildbot1.lab.home.gatwards.org', 
+  'Net1_RHEL6':'buildbot2.lab.home.gatwards.org',
 ]
 
 

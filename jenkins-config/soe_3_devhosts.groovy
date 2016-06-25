@@ -120,6 +120,7 @@ echo "#####################################################"
         todoIsFailure(false)
         includeCommentDiagnostics(false)
         verbose(false)
+        showOnlyFailures(false)
         testResults('test_results/*.tap')
       }
     }

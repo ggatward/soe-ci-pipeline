@@ -44,7 +44,7 @@ freeStyleJob('SOE1/Development/GIT_Checkout') {
     }
   }
   publishers {
-    downstream('SOE1/Push_Kickstarts', 'SUCCESS')
+    downstream('Push_Kickstarts', 'SUCCESS')
     publishCloneWorkspace('**') {
       criteria('Successful')
     }
@@ -86,16 +86,63 @@ freeStyleJob('SOE1/Development/Push_Kickstarts') {
   }
   steps {
     shell('''
-      echo "#####################################################"
-      echo "#                BUILDING KICKSTARTS                #"
-      echo "#####################################################"
-      /bin/bash -x ${WORKSPACE}/scripts/pushkickstarts.sh ${WORKSPACE}/soe/kickstarts
+echo "#####################################################"
+echo "#                BUILDING KICKSTARTS                #"
+echo "#####################################################"
+/bin/bash -x ${WORKSPACE}/scripts/pushkickstarts.sh ${WORKSPACE}/soe/kickstarts
     ''')
   }
   publishers {
-    downstream('SOE1/Deploy_Puppet_Modules', 'SUCCESS')
+    downstream('Deploy_Puppet_Modules', 'SUCCESS')
     mailer('$EMAIL_TO', true, false)
   }
 }
 
+
+/****************************************************************************
+ * Deploy Puppet Modules
+ ****************************************************************************/
+freeStyleJob('SOE1/Development/Deploy_Puppet_Modules') {
+  description('Trigger r10k on Satellite 6 to pull required Puppet modules')
+  displayName('03: Deploy SOE puppet modules to Satellite')
+  blockOnDownstreamProjects()
+  blockOnUpstreamProjects()
+  properties {
+    buildDiscarder {
+      strategy {
+        logRotator {
+          numToKeepStr('5')
+          artifactDaysToKeepStr('')
+          artifactNumToKeepStr('')
+          daysToKeepStr('')
+        }
+      }
+    }
+  }
+  scm {
+    cloneWorkspaceSCM {
+      parentJobName('SOE1/Development/GIT_Checkout')
+      criteria('')
+    }
+  }
+  wrappers {
+    preBuildCleanup()
+    environmentVariables {
+      propertiesFile('scripts/PARAMETERS')
+      env('R10K_ENV', 'RHEL_SOE_development')
+    }
+  }
+  steps {
+    shell('''
+echo "#####################################################"
+echo "#           DEPLOYING PUPPET MODULES                #"
+echo "#####################################################"
+/bin/bash -x ${WORKSPACE}/scripts/r10kdeploy.sh
+    ''')
+  }
+  publishers {
+    downstream('Boot_Test_VMs', 'SUCCESS')
+    mailer('$EMAIL_TO', true, false)
+  }
+}
 

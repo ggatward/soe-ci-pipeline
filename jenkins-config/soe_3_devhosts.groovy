@@ -118,7 +118,6 @@ echo "#####################################################"
         verbose(false)
         testResults('test_results/*.tap')
       }
-      mailer('$EMAIL_TO', true, false)
     }
   }
 

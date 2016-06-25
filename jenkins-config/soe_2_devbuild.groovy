@@ -20,7 +20,8 @@ freeStyleJob('SOE1/Development/GIT_Checkout') {
   multiscm {
     git {
       remote {
-        url('https://github.com/ggatward/soe-ci-pipeline')
+/*        url('https://github.com/ggatward/soe-ci-pipeline') */
+        url("${CI_GIT_URL}")
       }
       branch('development')
       shallowClone(true)
@@ -29,7 +30,8 @@ freeStyleJob('SOE1/Development/GIT_Checkout') {
     }
     git {
       remote {
-        url('https://github.com/ggatward/RHEL-SOE')
+/*        url('https://github.com/ggatward/RHEL-SOE') */
+        url("${SOE_GIT_URL}")
       }
       branch('development')
       shallowClone(true)

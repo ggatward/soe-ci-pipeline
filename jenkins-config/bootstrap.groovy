@@ -15,7 +15,7 @@ job("SOE seed job") {
   steps {
     dsl {
       external('jenkins-config/soe_*.groovy')
-      removeAction('DISABLE')
+      removeAction('DELETE')
       removeViewAction('IGNORE')
     }
   }

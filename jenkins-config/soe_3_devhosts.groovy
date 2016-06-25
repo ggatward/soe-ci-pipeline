@@ -96,6 +96,9 @@ echo "#####################################################"
         propertiesFile('scripts/PARAMETERS')
         env('TEST_ROOT', "${TEST_ROOT}")
       }
+      credentialsBinding{
+        usernamePassword('USERNAME', 'ROOTPASS', 'SOE_ROOT')
+      }
     }
     steps {
       shell("""

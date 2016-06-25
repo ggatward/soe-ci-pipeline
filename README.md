@@ -62,6 +62,7 @@ EPEL https://fedoraproject.org/wiki/EPEL and Jenkins http://pkg.jenkins-ci.org/r
 
     * Job DSL Plugin
     * Environment Injector Plugin
+    * Credentials Binding Plugin
     * Build Pipeline plugin
     * Clone Workspace SCM Plug-in
     * Git Plugin
@@ -107,6 +108,9 @@ EPEL https://fedoraproject.org/wiki/EPEL and Jenkins http://pkg.jenkins-ci.org/r
 ```
 
 This will give you a Jenkins Folder named SOE, containing a `Development` and a `Production` project. Each project contains a number of smaller projects that are chained together to form a pipeline - so we have a SOE project containing a Development pipeline and a Production pipeline.
+
+* In the Jenkins UI, navigate to `Credentials -> System -> Add domain`. Create a new domain called `RHEL Server SOE` and add a `Username with password` parameter with username = root, password = <whatever>, and ID = SOE_ROOT
+This is the root password used by Jenkins to access the build test hosts, and we are setting it in the Jenkins credential store to ensure that it is not visible in any of the build jobs that are to be created.
 
 * Check that the build plans are visible and correct via the Jenkins UI (We will need to edit parameters shortly).
     * you might need to reload the configuration from disk using 'Manage Jenkins -> Reload Configuration from Disk'.

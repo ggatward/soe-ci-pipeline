@@ -150,7 +150,7 @@ echo "#####################################################"
 /****************************************************************************
  * Reboot Test VMs
  ****************************************************************************/
-freeStyleJob('SOE1/Development/Deploy_Puppet_Modules') {
+freeStyleJob('SOE1/Development/Boot_Test_VMs') {
   description('Reboot all test VMs to trigger PXE build')
   displayName('04: Reboot test VMs')
   blockOnDownstreamProjects()

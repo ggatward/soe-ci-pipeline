@@ -14,7 +14,7 @@ def hostMap = [
 
 for (desc in hostMap.keySet()) {
   def host = hostMap.get(desc)
-  job("SOE1/Test ${desc} - ${host}") {
+  job("SOE1/Development/Test ${desc} - ${host}") {
     steps {
       shell("echo Test ${desc} - ${host}")
     }

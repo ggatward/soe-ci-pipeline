@@ -112,6 +112,10 @@ echo "#####################################################"
         validateNumberOfTests(true)
         outputTapToConsole(true)
         enableSubtests(true)
+        discardOldReports(false)
+        todoIsFailure(false)
+        includeCommentDiagnostics(false)
+        verbose(false)
         testResults('test_results/*.tap')
       }
       mailer('$EMAIL_TO', true, false)

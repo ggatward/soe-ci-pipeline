@@ -67,6 +67,13 @@ EPEL https://fedoraproject.org/wiki/EPEL and Jenkins http://pkg.jenkins-ci.org/r
     * JobFanIn Plugin
     * Version Number Plug-in
 
+* To freshen up the Jenkins interface a little, I also recommend the following plugins also be installed:
+  
+    * Green Balls Plugin
+    * Modern Status Plugin
+    * Project Build Times Plugin
+    * Embeddable Build Status Plugin
+
 * Restart Jenkins
 * `su` to the `jenkins` user (`su - jenkins -s /bin/bash`) and use `ssh-keygen` to create an ssh keypair. These will be used for authentication to both the git repository, and to the satellite server.
 * In the Jenkins UI, navigate to `Credentials -> System -> Add domain`. Create a new domain called `RHEL Server SOE` and add a `Username with password` parameter with username = root, password = <whatever>, and ID = SOE_ROOT

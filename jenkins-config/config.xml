@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Initial bootstrap Job DSL to (re)create the SOE build pipeline jobs from GIT SCM.</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>CI_GIT_URL</name>
+          <description>GIT URL for Jenkins CI scripts</description>
+          <defaultValue>https://github.com/ggatward/soe-ci-pipeline</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>SOE_GIT_URL</name>
+          <description>GIT URL for SOE Artefacts</description>
+          <defaultValue>https://github.com/ggatward/RHEL-SOE</defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.5.0">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <url>${CI_GIT_URL}</url>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>development</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="list"/>
+    <extensions/>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <javaposse.jobdsl.plugin.ExecuteDslScripts plugin="job-dsl@1.47">
+      <targets>jenkins-config/soe_*.groovy</targets>
+      <usingScriptText>false</usingScriptText>
+      <ignoreExisting>false</ignoreExisting>
+      <removedJobAction>DELETE</removedJobAction>
+      <removedViewAction>IGNORE</removedViewAction>
+      <lookupStrategy>JENKINS_ROOT</lookupStrategy>
+      <additionalClasspath></additionalClasspath>
+    </javaposse.jobdsl.plugin.ExecuteDslScripts>
+  </builders>
+  <publishers/>
+  <buildWrappers/>
+</project>

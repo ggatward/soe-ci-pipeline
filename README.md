@@ -46,75 +46,35 @@ NB I have SELinux disabled on the Jenkins server as I ran into too many problems
 * Ensure that the Jenkins host is subscribed to the rhel-server-7-rpms and rhel-server-7-satellite-tools-6.1-rpms repositories.
 * Subscribe the server to the EPEL and Jenkins repositories. If these are not available on your Satellite 6 server, use the following URLs:
 EPEL https://fedoraproject.org/wiki/EPEL and Jenkins http://pkg.jenkins-ci.org/redhat/
-* Install `httpd`, `git` and `nc` on the system. 
-* Puppet should have been installed during the provisioning process from Satellite 6, but if it is missing, install it here.
-
-    `yum install -y httpd git nc`
-* Ensure that httpd is set to start automatically
-
-    `systemctl enable httpd; systemctl start httpd`
-
-==================
-
-* Install `jenkins`, `tomcat` and Java. If you have setup the Jenkins repo correctly you should be able to simply use yum.
+* Install `git`, `nc` and `java-1.8.0-openjdk` on the system. 
+* Install `jenkins`. If you have setup the Jenkins repo correctly you should be able to simply use yum.
+* Open the firewall for port 8080: `firewall-cmd --permanent --add-port 8080/tcp && firewall-cmd --reload`
 * Start Jenkins and browse to the console at http://jenkinsserver:8080/
-* Select the 'Manage Jenkins' link, followed by 'Manage Plugins'. You will need to add the following plugins:
+* You will be prompted to run through the initial setup wizard. Allow Jenkins to install the default plugins.
+* Select the 'Manage Jenkins' link, followed by 'Manage Plugins'. You will need to add the following additional plugins:
 
+    * Build Timeout Plug-in 		(Default plugin)
+    * Credentials Binding Plugin	(Default plugin)
+    * Git Plugin			(Default plugin)
+    * Workspace Cleanup Plugin  	(Default plugin)
     * Job DSL Plugin
     * Environment Injector Plugin
-    * Credentials Binding Plugin
     * Build Pipeline plugin
     * Clone Workspace SCM Plug-in
-    * Git Plugin
     * Multiple SCMs Plugin
     * TAP Plugin
     * Post-Build Script Plug-in
-    * Build Timeout Plug-in
     * JobFanIn Plugin
     * Version Number Plug-in
-    * Workspace Cleanup Plugin
 
 * Restart Jenkins
-* `su` to the `jenkins` user (`su jenkins -s /bin/bash`) and use `ssh-keygen` to create an ssh keypair. These will be used for authentication to both the git repository, and to the satellite server.
-* Create the project build plans in Jenkins by creating the directory `/var/lib/jenkins/jobs/SOE` and copying in the directory structure and config.xml files from the CI Git repo `jenkins-config` directory into it. The resulting structure should look like this:
-```
-.
-├── config.xml
-└── jobs
-    ├── Development
-    │   ├── config.xml
-    │   └── jobs
-    │       ├── Boot_Test_VMs
-    │       │   └── config.xml
-    │       ├── Build_RHEL6_Net1
-    │       │   └── config.xml
-    │       ├── Build_RHEL7_Net1
-    │       │   └── config.xml
-    │       ├── Deploy_Puppet_Modules
-    │       │   └── config.xml
-    │       ├── GIT_Checkout
-    │       │   └── config.xml
-    │       ├── Notify_Success
-    │       │   └── config.xml
-    │       ├── Push_Kickstarts
-    │       │   └── config.xml
-    │       ├── Test_RHEL6_Net1
-    │       │   └── config.xml
-    │       └── Test_RHEL7_Net1
-    │           └── config.xml
-    └── Production
-        ├── config.xml
-        └── jobs
-```
-
-This will give you a Jenkins Folder named SOE, containing a `Development` and a `Production` project. Each project contains a number of smaller projects that are chained together to form a pipeline - so we have a SOE project containing a Development pipeline and a Production pipeline.
-
+* `su` to the `jenkins` user (`su - jenkins -s /bin/bash`) and use `ssh-keygen` to create an ssh keypair. These will be used for authentication to both the git repository, and to the satellite server.
 * In the Jenkins UI, navigate to `Credentials -> System -> Add domain`. Create a new domain called `RHEL Server SOE` and add a `Username with password` parameter with username = root, password = <whatever>, and ID = SOE_ROOT
 This is the root password used by Jenkins to access the build test hosts, and we are setting it in the Jenkins credential store to ensure that it is not visible in any of the build jobs that are to be created.
-
-* Check that the build plans are visible and correct via the Jenkins UI (We will need to edit parameters shortly).
+* Create the project build plans in Jenkins by making a directory `/var/lib/jenkins/jobs/SOE_Bootstrap` and copying the `config.xml` file from the `jenkins-config` directory of the CI Git repo to it.
+* Ensure that `jenkins` is the owner of the new job: `chown -R jenkins:jenkins /var/lib/jenkins/jobs` 
+* Check that the SOE_Bootstrap job is visible and correct via the Jenkins UI (We will need to edit parameters shortly).
     * you might need to reload the configuration from disk using 'Manage Jenkins -> Reload Configuration from Disk'.
-
 
 
 ### Git Repository
@@ -123,7 +83,8 @@ This is the root password used by Jenkins to access the build test hosts, and we
     * https://github.com/ggatward/RHEL-SOE          This is a demo SOE environment
 * Push these to a private git remote (or fork to a development branch on github).
 _Make sure to create a development branch of the RHEL-SOE and use that in Jenkins - NOT the master branch_
-* Edit the 'GIT Checkout' build plan on your Jenkins SOE project instance so that the two SCM checkouts (one for RHEL-SOE, the other for soe-ci-pipeline) point to the development branch of your private git remote - you will need to edit both of these.
+* Create a `jenkins` user with access to the SOE git repositories, and add the public SSH key for the `jenkins` user from the Jenkins server created earlier. This will allow Jenkins to merge and promote the SOE branches as part of the CI flow.
+* Configure the SOE_Bootstrap job, and set the `CI_GIT_URL` and `SOE_GIT_URL` String Parameters to reflect the location of the Git repositories for the CI scripts and SOE artefacts respectively, then save the job.
 
 
 ### Satellite 6
@@ -136,8 +97,7 @@ _Make sure to create a development branch of the RHEL-SOE and use that in Jenkin
   - Optional RPMs,
   - Common RPMs Server
   - Satellite 6.1 Tools
-* Create a sync plan that does a daily sync of the RHEL product
-* Do an initial sync
+* Create a sync plan that does a daily sync of the RHEL product and perform an initial sync.
 * Create a `jenkins` user on the satellite (both OS and Application)
 * Configure hammer for passwordless usage by creating a `~jenkins/.hammer/cli_config.yml` file. [More details here](http://blog.theforeman.org/2013/11/hammer-cli-for-foreman-part-i-setup.html).
 * Copy over the public key of the `jenkins` user on the Jenkins server to the `jenkins` user on the satellite and ensure that `jenkins` on the Jenkins server can do passwordless `ssh` to the satellite.
@@ -147,10 +107,11 @@ _Make sure to create a development branch of the RHEL-SOE and use that in Jenkin
 * Create a Content View called `Server SOE` that contains all required repositories for both RHEL 6 and RHEL 7, and publish this to the Library and the SOE Test environment. Be sure to include any custom repositories.
 * Create an Activation Key for both RHEL 6 and RHEL 7, using the Content View from `SOE Test`
 * Create a hostgroup (I called mine 'Jenkins Test Servers') that deploys machines on to the Compute Resource that you configured earlier, and uses the activation key that you created. Create a default root password and make a note of it.
-* Create a couple of initial test servers on your defined Compute Resource and deploy them.
-
+* Manually provision the test servers on your defined Compute Resource and deploy them. 
+* Ensure that the test servers are configured to boot from network BEFORE boot from local hard drive in thier BIOS configurtion. This is to ensure that when Jenkins triggers Satellite 6 to rebuild the test hosts, they will perform a PXE installation.
 
 These CII scripts use r10k to deploy puppet environments to the Satellite server. Further information on the configuration of r10k and Satellite 6 can be found at https://access.redhat.com/blogs/1169563/posts/2216351
+* Install the r10k rubygem on the Satellite 6 server: `gem install r10k`
 
 
 ### Configuration
@@ -168,11 +129,19 @@ RSA_ID=                Location of the public SSH key to use for PUSH_USER
 EMAIL_TO=              Space seperated list of email addresses to recieve notifications from Jenkins
 ```
 
+* ....Configure test machine hostnames....
+
 
 ### Getting Started
 At this point, you should be good to go. In fact Jenkins may have already kicked off a build for you when you pushed to github.
 
+
+* Run the SOE_Bootstrap job. This should result in a new job folder named SOE, containing a `Development` and a `Production` project. Each project contains a number of smaller jobs that are chained together to form a pipeline - so we have a SOE project containing a Development pipeline and a Production pipeline.
+
+
+
 Develop your build in your DEVELOPMENT branch checkout of RHEL-SOE. 
+
 
 Make sure that all Test VM's are configured to boot from the network before local HDD. This will ensure that they re-install via PXEboot when triggered to do so by Satellite 6.
 

@@ -133,7 +133,7 @@ echo "#####################################################"
 
 def joblist = ('')
 for (desc in hostMap.keySet()) {
-  joblist = "${joblist}" + "${desc},"
+  joblist = "${joblist}" + "Test_${desc},"
 }
 
 

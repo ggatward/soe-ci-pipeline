@@ -1,15 +1,15 @@
 /****************************************************************************
  * Create project folder structure
  ****************************************************************************/
-folder('SOE1') {
+folder('SOE') {
   description('SOE Project')
 }
 
-folder('SOE1/Development') {
+folder('SOE/Development') {
   description('SOE Build in Development Environment')
 }
 
-folder('SOE1/Production') {
+folder('SOE/Production') {
   description('SOE Build in Production Environment')
 }
 

@@ -18,7 +18,7 @@ for (desc in hostMap.keySet()) {
   /*******************************************************************
    * Create the Build-Watch jobs for each host
    *******************************************************************/
-  freeStyleJob("SOE1/Development/Build_${desc}") {
+  freeStyleJob("SOE/Development/Build_${desc}") {
     description("Monitor the build status of ${desc} - ${host}")
     displayName("05: Build ${desc} host")
     blockOnDownstreamProjects()
@@ -40,7 +40,7 @@ for (desc in hostMap.keySet()) {
     }
     scm {
       cloneWorkspaceSCM {
-        parentJobName('SOE1/Development/GIT_Checkout')
+        parentJobName('SOE/Development/GIT_Checkout')
         criteria('')
       }
     }
@@ -67,7 +67,7 @@ echo "#####################################################"
   /*******************************************************************
    * Create the Test jobs for each host
    *******************************************************************/
-  freeStyleJob("SOE1/Development/Test_${desc}") {
+  freeStyleJob("SOE/Development/Test_${desc}") {
     description("Run functional tests on ${desc} - ${host}")
     displayName("06: Test ${desc} host")
     blockOnDownstreamProjects()
@@ -86,7 +86,7 @@ echo "#####################################################"
     }
     scm {
       cloneWorkspaceSCM {
-        parentJobName('SOE1/Development/GIT_Checkout')
+        parentJobName('SOE/Development/GIT_Checkout')
         criteria('')
       }
     }
@@ -140,7 +140,7 @@ for (desc in hostMap.keySet()) {
 /*******************************************************************
  * Create the Test jobs for each host
  *******************************************************************/
-freeStyleJob("SOE1/Development/Mark_Dev_Done") {
+freeStyleJob("SOE/Development/Mark_Dev_Done") {
   description("Check successful completion of all Dev tests")
   displayName("07: Check Completion")
   blockOnDownstreamProjects()
@@ -173,7 +173,7 @@ freeStyleJob("SOE1/Development/Mark_Dev_Done") {
 
   scm {
     cloneWorkspaceSCM {
-      parentJobName('SOE1/Development/GIT_Checkout')
+      parentJobName('SOE/Development/GIT_Checkout')
       criteria('')
     }
   }

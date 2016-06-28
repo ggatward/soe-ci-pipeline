@@ -1,7 +1,7 @@
 /****************************************************************************
  * Git Checkout
  ****************************************************************************/
-freeStyleJob('SOE1/Development/GIT_Checkout') {
+freeStyleJob('SOE/Development/GIT_Checkout') {
   description('Checkout CI scripts and Development SOE GIT branch')
   displayName('01: Checkout GIT Repos')
   blockOnDownstreamProjects()
@@ -55,7 +55,7 @@ freeStyleJob('SOE1/Development/GIT_Checkout') {
 /****************************************************************************
  * Push Kickstarts
  ****************************************************************************/
-freeStyleJob('SOE1/Development/Push_Kickstarts') {
+freeStyleJob('SOE/Development/Push_Kickstarts') {
   description('Push Kickstarts to Satellite 6')
   displayName('02: Deploy kickstart files to Satellite')
   blockOnDownstreamProjects()
@@ -74,7 +74,7 @@ freeStyleJob('SOE1/Development/Push_Kickstarts') {
   }
   scm {
     cloneWorkspaceSCM {
-      parentJobName('SOE1/Development/GIT_Checkout')
+      parentJobName('SOE/Development/GIT_Checkout')
       criteria('')
     }
   }
@@ -102,7 +102,7 @@ echo "#####################################################"
 /****************************************************************************
  * Deploy Puppet Modules
  ****************************************************************************/
-freeStyleJob('SOE1/Development/Deploy_Puppet_Modules') {
+freeStyleJob('SOE/Development/Deploy_Puppet_Modules') {
   description('Trigger r10k on Satellite 6 to pull required Puppet modules')
   displayName('03: Deploy SOE puppet modules to Satellite')
   blockOnDownstreamProjects()
@@ -121,7 +121,7 @@ freeStyleJob('SOE1/Development/Deploy_Puppet_Modules') {
   }
   scm {
     cloneWorkspaceSCM {
-      parentJobName('SOE1/Development/GIT_Checkout')
+      parentJobName('SOE/Development/GIT_Checkout')
       criteria('')
     }
   }
@@ -150,7 +150,7 @@ echo "#####################################################"
 /****************************************************************************
  * Reboot Test VMs
  ****************************************************************************/
-freeStyleJob('SOE1/Development/Boot_Test_VMs') {
+freeStyleJob('SOE/Development/Boot_Test_VMs') {
   description('Reboot all test VMs to trigger PXE build')
   displayName('04: Reboot test VMs')
   blockOnDownstreamProjects()
@@ -169,7 +169,7 @@ freeStyleJob('SOE1/Development/Boot_Test_VMs') {
   }
   scm {
     cloneWorkspaceSCM {
-      parentJobName('SOE1/Development/GIT_Checkout')
+      parentJobName('SOE/Development/GIT_Checkout')
       criteria('')
     }
   }

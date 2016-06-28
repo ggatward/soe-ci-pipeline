@@ -125,5 +125,84 @@ echo "#####################################################"
     }
   }
 
-
 } /* End for loop */
+
+/*
+ * Build a comma seperated string of test jobs 
+ */
+
+def joblist = ('')
+for (desc in hostMap.keySet()) {
+  joblist = "${joblist}" + "${desc},"
+}
+
+
+/*******************************************************************
+ * Create the Test jobs for each host
+ *******************************************************************/
+freeStyleJob("SOE1/Development/Mark_Dev_Done") {
+  description("Check successful completion of all Dev tests")
+  displayName("07: Check Completion")
+  blockOnDownstreamProjects()
+  blockOnUpstreamProjects()
+  properties {
+    buildDiscarder {
+      strategy {
+        logRotator {
+          numToKeepStr('5')
+          artifactDaysToKeepStr('')
+          artifactNumToKeepStr('')
+          daysToKeepStr('')
+        }
+      }
+    }
+  }
+  configure { project ->
+    project / triggers << 'org.lonkar.jobfanin.FanInReverseBuildTrigger'(plugin: 'job-fan-in@1.0.0') {
+      spec()
+      upstreamProjects("${joblist}")
+      watchUpstreamRecursively('true')
+      threshold {
+        name('SUCCESS')
+        ordinal('0')
+        color('BLUE')
+        completeBuild('true')
+      }
+    }
+  }
+
+  scm {
+    cloneWorkspaceSCM {
+      parentJobName('SOE1/Development/GIT_Checkout')
+      criteria('')
+    }
+  }
+  wrappers {
+    preBuildCleanup()
+    environmentVariables {
+      propertiesFile('scripts/PARAMETERS')
+    }
+  }
+  steps {
+    shell("""
+echo "#####################################################"
+echo "#            SOMETHING             #"
+echo "#####################################################"
+      """)
+  }
+  publishers {
+    extendedEmail {
+      recipientList('geoff@gatwards.org')
+      triggers {
+        success {
+          sendTo {
+            requester()
+          }
+        }
+      }
+    }
+  }
+}
+
+
+

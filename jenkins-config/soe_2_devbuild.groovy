@@ -1,10 +1,11 @@
 /****************************************************************************
  * Git Checkout
  ****************************************************************************/
-freeStyleJob('SOE/Development/GIT_Checkout') {
-  description('Checkout CI scripts and Development SOE GIT branch')
-  displayName('01: Checkout GIT Repos')
+freeStyleJob('SOE/Server_SOE') {
+  description('Initiate build of Server SOE')
+  displayName('Server SOE')
   blockOnDownstreamProjects()
+/*
   properties {
     buildDiscarder {
       strategy {
@@ -17,6 +18,7 @@ freeStyleJob('SOE/Development/GIT_Checkout') {
       }
     }
   }
+*/
   multiscm {
     git {
       remote {
@@ -44,7 +46,7 @@ freeStyleJob('SOE/Development/GIT_Checkout') {
     }
   }
   publishers {
-    downstream('Push_Kickstarts', 'SUCCESS')
+    downstream('Development/Push_Kickstarts', 'SUCCESS')
     publishCloneWorkspace('**') {
       criteria('Successful')
     }
@@ -52,12 +54,14 @@ freeStyleJob('SOE/Development/GIT_Checkout') {
   }
 }
 
+
+
 /****************************************************************************
  * Push Kickstarts
  ****************************************************************************/
 freeStyleJob('SOE/Development/Push_Kickstarts') {
   description('Push Kickstarts to Satellite 6')
-  displayName('02: Deploy kickstart files to Satellite')
+  displayName('1. Deploy kickstart files to Satellite')
   blockOnDownstreamProjects()
   blockOnUpstreamProjects()
   properties {
@@ -74,7 +78,7 @@ freeStyleJob('SOE/Development/Push_Kickstarts') {
   }
   scm {
     cloneWorkspaceSCM {
-      parentJobName('SOE/Development/GIT_Checkout')
+      parentJobName('SOE/Server_SOE')
       criteria('')
     }
   }
@@ -104,7 +108,7 @@ echo "#####################################################"
  ****************************************************************************/
 freeStyleJob('SOE/Development/Deploy_Puppet_Modules') {
   description('Trigger r10k on Satellite 6 to pull required Puppet modules')
-  displayName('03: Deploy SOE puppet modules to Satellite')
+  displayName('2. Deploy SOE puppet modules to Satellite')
   blockOnDownstreamProjects()
   blockOnUpstreamProjects()
   properties {
@@ -121,7 +125,7 @@ freeStyleJob('SOE/Development/Deploy_Puppet_Modules') {
   }
   scm {
     cloneWorkspaceSCM {
-      parentJobName('SOE/Development/GIT_Checkout')
+      parentJobName('SOE/Server_SOE')
       criteria('')
     }
   }
@@ -152,7 +156,7 @@ echo "#####################################################"
  ****************************************************************************/
 freeStyleJob('SOE/Development/Boot_Test_VMs') {
   description('Reboot all test VMs to trigger PXE build')
-  displayName('04: Reboot test VMs')
+  displayName('3. Reboot test VMs')
   blockOnDownstreamProjects()
   blockOnUpstreamProjects()
   properties {
@@ -169,7 +173,7 @@ freeStyleJob('SOE/Development/Boot_Test_VMs') {
   }
   scm {
     cloneWorkspaceSCM {
-      parentJobName('SOE/Development/GIT_Checkout')
+      parentJobName('SOE/Server_SOE')
       criteria('')
     }
   }
@@ -184,7 +188,7 @@ freeStyleJob('SOE/Development/Boot_Test_VMs') {
 echo "#####################################################"
 echo "#                REBUILDING TEST VMS                #"
 echo "#####################################################"
-/bin/bash -x ${WORKSPACE}/scripts/buildtestvms.sh 
+#/bin/bash -x ${WORKSPACE}/scripts/buildtestvms.sh 
     ''')
   }
   publishers {

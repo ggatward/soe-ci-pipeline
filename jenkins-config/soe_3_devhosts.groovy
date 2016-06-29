@@ -20,7 +20,7 @@ for (desc in hostMap.keySet()) {
    *******************************************************************/
   freeStyleJob("SOE/Development/Build_${desc}") {
     description("Monitor the build status of ${desc} - ${host}")
-    displayName("05: Build ${desc} host")
+    displayName("4. Build ${desc} host")
     blockOnDownstreamProjects()
     blockOnUpstreamProjects()
     properties {
@@ -40,7 +40,7 @@ for (desc in hostMap.keySet()) {
     }
     scm {
       cloneWorkspaceSCM {
-        parentJobName('SOE/Development/GIT_Checkout')
+        parentJobName('SOE/Server_SOE')
         criteria('')
       }
     }
@@ -55,7 +55,7 @@ for (desc in hostMap.keySet()) {
 echo "#####################################################"
 echo "#          WAITING FOR BUILD COMPLETION             #"
 echo "#####################################################"
-/bin/bash -x \${WORKSPACE}/scripts/waitforbuild.sh ${host}
+#/bin/bash -x \${WORKSPACE}/scripts/waitforbuild.sh ${host}
       """)
     }
     publishers {
@@ -69,7 +69,7 @@ echo "#####################################################"
    *******************************************************************/
   freeStyleJob("SOE/Development/Test_${desc}") {
     description("Run functional tests on ${desc} - ${host}")
-    displayName("06: Test ${desc} host")
+    displayName("5. Test ${desc} host")
     blockOnDownstreamProjects()
     blockOnUpstreamProjects()
     properties {
@@ -86,7 +86,7 @@ echo "#####################################################"
     }
     scm {
       cloneWorkspaceSCM {
-        parentJobName('SOE/Development/GIT_Checkout')
+        parentJobName('SOE/Server_SOE')
         criteria('')
       }
     }
@@ -135,74 +135,3 @@ def joblist = ('')
 for (desc in hostMap.keySet()) {
   joblist = "${joblist}" + "Test_${desc},"
 }
-
-
-/*******************************************************************
- * Create the Test jobs for each host
- *******************************************************************/
-freeStyleJob("SOE/Development/Mark_Dev_Done") {
-  description("Check successful completion of all Dev tests")
-  displayName("07: Check Completion")
-  blockOnDownstreamProjects()
-  blockOnUpstreamProjects()
-  properties {
-    buildDiscarder {
-      strategy {
-        logRotator {
-          numToKeepStr('5')
-          artifactDaysToKeepStr('')
-          artifactNumToKeepStr('')
-          daysToKeepStr('')
-        }
-      }
-    }
-  }
-  configure { project ->
-    project / triggers << 'org.lonkar.jobfanin.FanInReverseBuildTrigger'(plugin: 'job-fan-in@1.0.0') {
-      spec()
-      upstreamProjects("${joblist}")
-      watchUpstreamRecursively('true')
-      threshold {
-        name('SUCCESS')
-        ordinal('0')
-        color('BLUE')
-        completeBuild('true')
-      }
-    }
-  }
-
-  scm {
-    cloneWorkspaceSCM {
-      parentJobName('SOE/Development/GIT_Checkout')
-      criteria('')
-    }
-  }
-  wrappers {
-    preBuildCleanup()
-    environmentVariables {
-      propertiesFile('scripts/PARAMETERS')
-    }
-  }
-  steps {
-    shell("""
-echo "#####################################################"
-echo "#            SOMETHING             #"
-echo "#####################################################"
-      """)
-  }
-  publishers {
-    extendedEmail {
-      recipientList('geoff@gatwards.org')
-      triggers {
-        success {
-          sendTo {
-            requester()
-          }
-        }
-      }
-    }
-  }
-}
-
-
-

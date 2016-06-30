@@ -65,65 +65,6 @@ freeStyleJob('SOE/Server_SOE') {
       propertiesFile('scripts/PARAMETERS')
     }
   }
-  steps {
-    shell('''
-mkdir /var/lib/jenkins/jobs/SOE/jobs/Server_SOE/promotions/Validate_in_Dev
-cat << EOF > /var/lib/jenkins/jobs/SOE/jobs/Server_SOE/promotions/Validate_in_Dev/config.xml
-<?xml version='1.0' encoding='UTF-8'?>
-<hudson.plugins.promoted__builds.PromotionProcess plugin="promoted-builds@2.27">
-  <keepDependencies>false</keepDependencies>
-  <properties/>
-  <scm class="hudson.scm.NullSCM"/>
-  <canRoam>false</canRoam>
-  <disabled>false</disabled>
-  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
-  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <triggers/>
-  <concurrentBuild>false</concurrentBuild>
-  <conditions>
-    <hudson.plugins.promoted__builds.conditions.DownstreamPassCondition>
-      <jobs>Development/Finish</jobs>
-      <evenIfUnstable>false</evenIfUnstable>
-    </hudson.plugins.promoted__builds.conditions.DownstreamPassCondition>
-  </conditions>
-  <icon>star-green-e</icon>
-  <isVisible></isVisible>
-  <buildSteps/>
-</hudson.plugins.promoted__builds.PromotionProcess>
-EOF
-#
-mkdir /var/lib/jenkins/jobs/SOE/jobs/Server_SOE/promotions/Promoted_to_Production
-cat << EOF > /var/lib/jenkins/jobs/SOE/jobs/Server_SOE/promotions/Promoted_to_Production/config.xml
-<?xml version='1.0' encoding='UTF-8'?>
-<hudson.plugins.promoted__builds.PromotionProcess plugin="promoted-builds@2.27">
-  <keepDependencies>false</keepDependencies>
-  <properties/>
-  <scm class="hudson.scm.NullSCM"/>
-  <canRoam>false</canRoam>
-  <disabled>false</disabled>
-  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
-  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <triggers/>
-  <concurrentBuild>false</concurrentBuild>
-  <conditions>
-    <hudson.plugins.promoted__builds.conditions.ManualCondition>
-      <users>geoff</users>
-      <parameterDefinitions/>
-    </hudson.plugins.promoted__builds.conditions.ManualCondition>
-    <hudson.plugins.promoted__builds.conditions.UpstreamPromotionCondition>
-      <requiredPromotionNames>Validated in Dev</requiredPromotionNames>
-    </hudson.plugins.promoted__builds.conditions.UpstreamPromotionCondition>
-  </conditions>
-  <icon>star-gold</icon>
-  <isVisible></isVisible>
-  <buildSteps>
-    <hudson.plugins.promoted__builds.KeepBuildForeverAction/>
-  </buildSteps>
-</hudson.plugins.promoted__builds.PromotionProcess>
-EOF
-
-    ''')
-  }
   publishers {
     downstream('Development/Push_Kickstarts', 'SUCCESS')
     publishCloneWorkspace('**') {

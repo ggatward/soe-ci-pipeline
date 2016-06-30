@@ -67,8 +67,8 @@ freeStyleJob('SOE/Server_SOE') {
   }
   steps {
     shell('''
-mkdir /var/lib/jenkins/jobs/TEST/jobs/Server_SOE/promotions/Validate_in_Dev
-cat << EOF > /var/lib/jenkins/jobs/TEST/jobs/Server_SOE/promotions/Validate_in_Dev/config.xml
+mkdir /var/lib/jenkins/jobs/SOE/jobs/Server_SOE/promotions/Validate_in_Dev
+cat << EOF > /var/lib/jenkins/jobs/SOE/jobs/Server_SOE/promotions/Validate_in_Dev/config.xml
 <?xml version='1.0' encoding='UTF-8'?>
 <hudson.plugins.promoted__builds.PromotionProcess plugin="promoted-builds@2.27">
   <keepDependencies>false</keepDependencies>
@@ -92,8 +92,8 @@ cat << EOF > /var/lib/jenkins/jobs/TEST/jobs/Server_SOE/promotions/Validate_in_D
 </hudson.plugins.promoted__builds.PromotionProcess>
 EOF
 #
-mkdir /var/lib/jenkins/jobs/TEST/jobs/Server_SOE/promotions/Promoted_to_Production
-cat << EOF > /var/lib/jenkins/jobs/TEST/jobs/Server_SOE/promotions/Promoted_to_Production/config.xml
+mkdir /var/lib/jenkins/jobs/SOE/jobs/Server_SOE/promotions/Promoted_to_Production
+cat << EOF > /var/lib/jenkins/jobs/SOE/jobs/Server_SOE/promotions/Promoted_to_Production/config.xml
 <?xml version='1.0' encoding='UTF-8'?>
 <hudson.plugins.promoted__builds.PromotionProcess plugin="promoted-builds@2.27">
   <keepDependencies>false</keepDependencies>

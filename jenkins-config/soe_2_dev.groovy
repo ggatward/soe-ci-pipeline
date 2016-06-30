@@ -33,8 +33,8 @@ freeStyleJob('SOE/Server_SOE') {
     configure { project ->
       project / 'properties' / 'hudson.plugins.promoted__builds.JobPropertyImpl'(plugin: 'promoted-builds@2.27') {
           activeProcessNames {
-            string('Validated in Dev')
-            string('Promoted to Production')
+            string('Validated_in_Dev')
+            string('Promoted_to_Production')
           }
       }
     }
@@ -64,6 +64,65 @@ freeStyleJob('SOE/Server_SOE') {
     environmentVariables {
       propertiesFile('scripts/PARAMETERS')
     }
+  }
+  steps {
+    shell('''
+mkdir /var/lib/jenkins/jobs/TEST/jobs/Server_SOE/promotions/Validate_in_Dev
+cat << EOF > /var/lib/jenkins/jobs/TEST/jobs/Server_SOE/promotions/Validate_in_Dev/config.xml
+<?xml version='1.0' encoding='UTF-8'?>
+<hudson.plugins.promoted__builds.PromotionProcess plugin="promoted-builds@2.27">
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <conditions>
+    <hudson.plugins.promoted__builds.conditions.DownstreamPassCondition>
+      <jobs>../SOE/Development/Test_Net1_RHEL6,../SOE/Development/Test_Net1_RHEL7,</jobs>
+      <evenIfUnstable>false</evenIfUnstable>
+    </hudson.plugins.promoted__builds.conditions.DownstreamPassCondition>
+  </conditions>
+  <icon>star-green-e</icon>
+  <isVisible></isVisible>
+  <buildSteps/>
+</hudson.plugins.promoted__builds.PromotionProcess>
+EOF
+#
+mkdir /var/lib/jenkins/jobs/TEST/jobs/Server_SOE/promotions/Promoted_to_Production
+cat << EOF > /var/lib/jenkins/jobs/TEST/jobs/Server_SOE/promotions/Promoted_to_Production/config.xml
+<?xml version='1.0' encoding='UTF-8'?>
+<hudson.plugins.promoted__builds.PromotionProcess plugin="promoted-builds@2.27">
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <conditions>
+    <hudson.plugins.promoted__builds.conditions.ManualCondition>
+      <users>geoff</users>
+      <parameterDefinitions/>
+    </hudson.plugins.promoted__builds.conditions.ManualCondition>
+    <hudson.plugins.promoted__builds.conditions.UpstreamPromotionCondition>
+      <requiredPromotionNames>Validated in Dev</requiredPromotionNames>
+    </hudson.plugins.promoted__builds.conditions.UpstreamPromotionCondition>
+  </conditions>
+  <icon>star-gold</icon>
+  <isVisible></isVisible>
+  <buildSteps>
+    <hudson.plugins.promoted__builds.KeepBuildForeverAction/>
+  </buildSteps>
+</hudson.plugins.promoted__builds.PromotionProcess>
+EOF
+
+    ''')
   }
   publishers {
     downstream('Development/Push_Kickstarts', 'SUCCESS')

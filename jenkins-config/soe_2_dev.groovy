@@ -82,7 +82,7 @@ cat << EOF > /var/lib/jenkins/jobs/TEST/jobs/Server_SOE/promotions/Validate_in_D
   <concurrentBuild>false</concurrentBuild>
   <conditions>
     <hudson.plugins.promoted__builds.conditions.DownstreamPassCondition>
-      <jobs>../SOE/Development/Test_Net1_RHEL6,../SOE/Development/Test_Net1_RHEL7,</jobs>
+      <jobs>Development/Finish</jobs>
       <evenIfUnstable>false</evenIfUnstable>
     </hudson.plugins.promoted__builds.conditions.DownstreamPassCondition>
   </conditions>

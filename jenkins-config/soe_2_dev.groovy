@@ -3,11 +3,12 @@
  * Define all test hosts here. 
  * Format is 'Description':'hostname'
  *******************************************************************/
-def hostMap = [
+/*
+def devHosts = [
   'Net1_RHEL7':'buildbot1.lab.home.gatwards.org', 
   'Net1_RHEL6':'buildbot2.lab.home.gatwards.org',
 ]
-
+*/
 
 
 /****************************************************************************
@@ -222,8 +223,8 @@ echo "#####################################################"
  * Loop through each host...
  *******************************************************************/
 
-for (desc in hostMap.keySet()) {
-  def host = hostMap.get(desc)
+for (desc in devHosts.keySet()) {
+  def host = devHosts.get(desc)
 
   /*******************************************************************
    * Create the Build-Watch jobs for each host
@@ -342,7 +343,7 @@ echo "#####################################################"
  */
 
 def joblist = ('')
-for (desc in hostMap.keySet()) {
+for (desc in devHosts.keySet()) {
   joblist = "${joblist}" + "Test_${desc},"
 }
 

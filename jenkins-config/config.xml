@@ -4,6 +4,7 @@
   <description>Initial bootstrap Job DSL to (re)create the SOE build pipeline jobs from GIT SCM.</description>
   <keepDependencies>false</keepDependencies>
   <properties>
+    <com.synopsys.arc.jenkinsci.plugins.jobrestrictions.jobs.JobRestrictionProperty plugin="job-restrictions@0.4"/>
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
         <hudson.model.StringParameterDefinition>
@@ -42,12 +43,13 @@
   <triggers/>
   <concurrentBuild>false</concurrentBuild>
   <builders>
-    <javaposse.jobdsl.plugin.ExecuteDslScripts plugin="job-dsl@1.47">
+    <javaposse.jobdsl.plugin.ExecuteDslScripts plugin="job-dsl@1.48">
       <targets>jenkins-config/soe_*.groovy</targets>
       <usingScriptText>false</usingScriptText>
       <ignoreExisting>false</ignoreExisting>
+      <ignoreMissingFiles>false</ignoreMissingFiles>
       <removedJobAction>DELETE</removedJobAction>
-      <removedViewAction>IGNORE</removedViewAction>
+      <removedViewAction>DELETE</removedViewAction>
       <lookupStrategy>JENKINS_ROOT</lookupStrategy>
       <additionalClasspath></additionalClasspath>
     </javaposse.jobdsl.plugin.ExecuteDslScripts>

@@ -40,8 +40,6 @@ This set of scripts and the instructions below build a RHEL 6 Server and RHEL 7 
 
 ### Jenkins Server
 
-NB I have SELinux disabled on the Jenkins server as I ran into too many problems with it enabled and didn't have the time to fix them.
-
 * From Satellite 6, provision a RHEL 7 server with a minimum of 4GB RAM and 50GB availabile in `/var/lib/jenkins`. The Jenkins host can be a VM.
 * Ensure that the Jenkins host is subscribed to the rhel-server-7-rpms and rhel-server-7-satellite-tools-6.1-rpms repositories.
 * Subscribe the server to the EPEL and Jenkins repositories. If these are not available on your Satellite 6 server, use the following URLs:
@@ -83,7 +81,6 @@ This is the root password used by Jenkins to access the build test hosts, and we
 * Check that the SOE_Bootstrap job is visible and correct via the Jenkins UI (We will need to edit parameters shortly).
     * you might need to reload the configuration from disk using 'Manage Jenkins -> Reload Configuration from Disk'.
 
-* The following manual configuration is needed as a workaround for the Promoted plugin as the actions cannot be scripted via JobDSL yet:
 
 
 
@@ -95,7 +92,6 @@ This is the root password used by Jenkins to access the build test hosts, and we
 * Push these to a private git remote (or fork to a development branch on github).
 _Make sure to create a development branch of the RHEL-SOE and use that in Jenkins - NOT the master branch_
 * Create a `jenkins` user with access to the SOE git repositories, and add the public SSH key for the `jenkins` user from the Jenkins server created earlier. This will allow Jenkins to merge and promote the SOE branches as part of the CI flow.
-* Configure the SOE_Bootstrap job, and set the `CI_GIT_URL` and `SOE_GIT_URL` String Parameters to reflect the location of the Git repositories for the CI scripts and SOE artefacts respectively, then save the job.
 
 
 
@@ -146,7 +142,7 @@ When the SOE Bootstrap job is run to create the SOE project, seperate build and 
 During the build process, Jenkins will instruct Satellite 6 to set these hosts to build mode and power-cycle them.
 If everything has been configured correctly, this will initiate a re-install of each host via PXE kickstart.
 
-To configure the test hosts, locate the file  jenkins-config/soe_2_dev.groovy within the CII scripts GIT repository.
+To configure the test hosts, locate the file `jenkins-config/soe_2_dev.groovy` within the CII scripts GIT repository.
 At the top of this file is a groovy 'map' definition, defining the description and hostname of each test host.
 The format must remain as shown below with no spaces in the definition, and the FQDN of each test host.
 
@@ -161,18 +157,53 @@ def devHosts = [
 
 *Whenever hosts are added or deleted from this configuration, the SOE_Bootstrap job must be run to re-generate the Jenkins build and test job definitions.*
 
+* Configure the SOE_Bootstrap job, and set the `CI_GIT_URL` and `SOE_GIT_URL` String Parameters to reflect the location of the Git repositories for the CI scripts and SOE artefacts respectively, then save the job.
+
 
 ### Getting Started
-At this point, you should be good to go. In fact Jenkins may have already kicked off a build for you when you pushed to github.
+
+* Run the SOE_Bootstrap job. Verify the Git URLs for both the CI and SOE repositories. This should result in a new job folder named SOE, containing a `Development` and a `Production` project. Each project contains a number of smaller jobs that are chained together to form a pipeline - so we have a SOE project containing a Development pipeline and a Production pipeline.
+
+* The following manual configuration is needed as a workaround for the Promoted plugin as the promotion actions cannot be scripted via JobDSL yet:
+
+    * Open the configuration page for the 'Server SOE' job in the SOE folder 
+    * In the 'General' section, tick the 'Promote builds when...' option
+    * Configure the Promotion process as follows:
+      - Name: `Promoted_to_Production`
+      - Icon: Gold Star
+      - Criteria: Only when manually approved (Add jenkins users who can perform the approval if required)
+      - Criteria: When the following upstream promotions are promoted = `Validated_in_Dev`
+      - Actions: Execute Shell
+    * Add a second Promotion process and configure it as follows:
+      - Name: `Validated_in_Dev`
+      - Icon: Green empty star
+      - Criteria: When the following downstream projects build successfully = `Development/Finish`
+    * Save the 'Server SOE' job.
+    * Re-run the SOE_Bootstrap job to reset the 'manual modification' flag on the updated job.
 
 
-* Run the SOE_Bootstrap job. This should result in a new job folder named SOE, containing a `Development` and a `Production` project. Each project contains a number of smaller jobs that are chained together to form a pipeline - so we have a SOE project containing a Development pipeline and a Production pipeline.
+
+Develop your SOE build in your DEVELOPMENT branch checkout of RHEL-SOE. Jenkins will use the development branch whilst building and testing the development SOE. The master branch will be the Production SOE, and will be managed by the Jenkins promotion workflow.
 
 
+### Building the Development SOE
 
-Develop your build in your DEVELOPMENT branch checkout of RHEL-SOE. 
+When you are ready to test the SOE in the DEVELOPMENT environment, simply run the 'Server SOE' job from the SOE folder. Alternatively, you can use the 'Run' button from the 'Dev SOE Pipeline' view.
+The build will progress along the pipeline, with all configured test hosts being rebuilt in parallel. Once the hosts are built, they will have the test cases run against them. Only if *ALL* of the hosts test cases pass will the Dev build be marked as successful.
+On a successful development build cycle, the main 'Server SOE' job will be marked with a promotion icon indicating that the dev testing was good. At this point it can be manually promoted to the Production environment if desired.
 
 
-Make sure that all Test VM's are configured to boot from the network before local HDD. This will ensure that they re-install via PXEboot when triggered to do so by Satellite 6.
+### Promoting the SOE to production
+
+When everything has tested successfully and the 'Validated in Dev' auto-promotion status has been set on the base 'Server SOE' job, the build can be promoted to production my clicking the 'Promotion Status' link in the job, or by clicking on the promotion icon for a specific build.
+
+The promotion process will do the following (using the stored SCM Git checkout that passed the dev testing):
+* Create a version number for the SOE
+* Perform a string replacement of SOE_DEV with SOE_PROD in all kickstart erb files
+* Merge the updated SOE artefacts to the 'master' branch of the SOE repository
+* Create a Git Tag of the version number
+* Push the production artefects to Satellite 6
+* Build and test any configured production sanity test VM's
+* Give a final 'All OK' promotion status
 
 

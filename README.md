@@ -141,8 +141,26 @@ RSA_ID=                Location of the public SSH key to use for PUSH_USER
 EMAIL_TO=              Space seperated list of email addresses to recieve notifications from Jenkins
 ```
 
-* ....Configure test machine hostnames....
-* Configure test hosts in the soe_2_dev.groovy DSL job file
+* Define test hosts
+When the SOE Bootstrap job is run to create the SOE project, seperate build and test jobs are dynamically created for each defined test host. There should be as many test hosts as you have seperate environments to build the SOE into.
+During the build process, Jenkins will instruct Satellite 6 to set these hosts to build mode and power-cycle them.
+If everything has been configured correctly, this will initiate a re-install of each host via PXE kickstart.
+
+To configure the test hosts, locate the file  jenkins-config/soe_2_dev.groovy within the CII scripts GIT repository.
+At the top of this file is a groovy 'map' definition, defining the description and hostname of each test host.
+The format must remain as shown below with no spaces in the definition, and the FQDN of each test host.
+
+```
+def devHosts = [
+  'VMware_RHEL7':'buildbot1.example.org',
+  'VMware_RHEL6':'buildbot2.example.org',
+  'KVM_RHEL7':'buildbot3.example.org',
+  'KVM_RHEL6':'buildbot4.example.org',
+]
+```
+
+*Whenever hosts are added or deleted from this configuration, the SOE_Bootstrap job must be run to re-generate the Jenkins build and test job definitions.*
+
 
 ### Getting Started
 At this point, you should be good to go. In fact Jenkins may have already kicked off a build for you when you pushed to github.

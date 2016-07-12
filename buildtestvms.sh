@@ -17,22 +17,30 @@ if [[ -z ${PUSH_USER} ]] || [[ -z ${SATELLITE} ]]  || [[ -z ${RSA_ID} ]] \
 fi
 
 # get our test machines into an array variable TEST_VM_LIST
-function get_test_vm_list() {
+#function get_test_vm_list() {
+#  local J=0
+#  for I in $(ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
+#      "hammer content-host list --organization \"${ORG}\" \
+#          --host-collection \"$TESTVM_HOSTCOLLECTION\" \
+#          | tail -n +4 | cut -f2 -d \"|\" | head -n -1"); do
+#    TEST_VM_LIST[$J]=$I
+#    ((J+=1))
+#  done
+#}
+#get_test_vm_list # populate TEST_VM_LIST
+
+function get_dev_vm_list() {
   local J=0
-  for I in $(ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
-      "hammer content-host list --organization \"${ORG}\" \
-          --host-collection \"$TESTVM_HOSTCOLLECTION\" \
-          | tail -n +4 | cut -f2 -d \"|\" | head -n -1"); do
-    TEST_VM_LIST[$J]=$I
-    ((J+=1))
-  done
+  hostlist=$(grep -A20 'def devHosts' ${WORKSPACE}/jenkins-config/soe_2_dev.groovy \
+    | grep -B20 "]" | grep : | awk -F: '{ print $2 }' | tr -d "\',")
+  TEST_VM_LIST=( $hostlist )
 }
 
-get_test_vm_list # populate TEST_VM_LIST
+get_dev_vm_list
 
 # Error out if no test VM's are available.
 if [ $(echo ${#TEST_VM_LIST[@]}) -eq 0 ]; then
-  err "No test VMs configured in Satellite"
+  err "No test VMs configured"
   exit ${WORKSPACE_ERR}
 fi
 

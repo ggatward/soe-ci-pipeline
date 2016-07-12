@@ -1,4 +1,4 @@
-class TestHosts {
+/*class TestHosts {*/
   /*******************************************************************
    * Define all test hosts here.
    * Format is 'Description':'hostname'
@@ -9,5 +9,7 @@ class TestHosts {
       'Net1_RHEL6':'buildbot2.lab.home.gatwards.org',
     ]
   }
+/*
 }
+*/
 

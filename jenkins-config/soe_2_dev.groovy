@@ -13,7 +13,7 @@ def devHosts = [
 /****************************************************************************
  * Git Checkout
  ****************************************************************************/
-freeStyleJob('SOE/Server_SOE') {
+freeStyleJob('SOE/SOE_Checkout') {
   description('Initiate build of Server SOE')
   displayName('Server SOE')
   blockOnDownstreamProjects()
@@ -98,7 +98,7 @@ freeStyleJob('SOE/Development/Push_Kickstarts') {
   }
   scm {
     cloneWorkspaceSCM {
-      parentJobName('SOE/Server_SOE')
+      parentJobName('SOE/SOE_Checkout')
       criteria('Successful')
     }
   }
@@ -145,7 +145,7 @@ freeStyleJob('SOE/Development/Deploy_Puppet_Modules') {
   }
   scm {
     cloneWorkspaceSCM {
-      parentJobName('SOE/Server_SOE')
+      parentJobName('SOE/SOE_Checkout')
       criteria('Successful')
     }
   }
@@ -193,7 +193,7 @@ freeStyleJob('SOE/Development/Boot_Test_VMs') {
   }
   scm {
     cloneWorkspaceSCM {
-      parentJobName('SOE/Server_SOE')
+      parentJobName('SOE/SOE_Checkout')
       criteria('Successful')
     }
   }
@@ -250,7 +250,7 @@ for (desc in devHosts.keySet()) {
     }
     scm {
       cloneWorkspaceSCM {
-        parentJobName('SOE/Server_SOE')
+        parentJobName('SOE/SOE_Checkout')
         criteria('Successful')
       }
     }
@@ -296,7 +296,7 @@ echo "#####################################################"
     }
     scm {
       cloneWorkspaceSCM {
-        parentJobName('SOE/Server_SOE')
+        parentJobName('SOE/SOE_Checkout')
         criteria('Successful')
       }
     }

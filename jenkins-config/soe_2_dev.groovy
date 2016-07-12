@@ -12,9 +12,11 @@ def devHosts = [
 
 hudson.FilePath workspace = hudson.model.Executor.currentExecutor().getCurrentWorkspace()
 
-new GroovyShell().parse( new File( "${workspace}/TestHosts.groovy" ) ).with {
-  LoadTestHosts()
+def script = new GroovyScriptEngine('.').with {
+  loadScriptByName( "${workspace}/TestHosts.groovy" )
 }
+this.metaClass.mixin script
+LoadTestHosts()
 
 /****************************************************************************
  * Git Checkout

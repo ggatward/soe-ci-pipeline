@@ -10,7 +10,9 @@ def devHosts = [
 ]
 */
 
-evaluate(new File("../../TESTHOSTS"))
+new GroovyShell().parse( new File( '../TestHosts.groovy' ) ).with {
+  LoadTestHosts()
+}
 
 /****************************************************************************
  * Git Checkout

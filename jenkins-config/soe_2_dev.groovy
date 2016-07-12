@@ -10,7 +10,7 @@ def devHosts = [
 ]
 */
 
-evaluate(new File("../TESTHOSTS"))
+evaluate(new File("../../TESTHOSTS"))
 
 /****************************************************************************
  * Git Checkout

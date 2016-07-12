@@ -17,6 +17,7 @@ freeStyleJob('SOE/SOE_Checkout') {
   description('Initiate build of Server SOE')
   displayName('Server SOE')
   blockOnDownstreamProjects()
+  authenticationToken('Satellite')
   properties {
 /*
     buildDiscarder {
@@ -70,7 +71,7 @@ freeStyleJob('SOE/SOE_Checkout') {
     publishCloneWorkspace('**') {
       criteria('Successful')
     }
-    mailer('$EMAIL_TO', true, false)
+    mailer('${EMAIL_TO}', true, false)
   }
 }
 
@@ -118,7 +119,7 @@ echo "#####################################################"
   }
   publishers {
     downstream('Deploy_Puppet_Modules', 'SUCCESS')
-    mailer('$EMAIL_TO', true, false)
+    mailer('${EMAIL_TO}', true, false)
   }
 }
 
@@ -166,7 +167,7 @@ echo "#####################################################"
   }
   publishers {
     downstream('Boot_Test_VMs', 'SUCCESS')
-    mailer('$EMAIL_TO', true, false)
+    mailer('${EMAIL_TO}', true, false)
   }
 }
 
@@ -212,7 +213,7 @@ echo "#####################################################"
     ''')
   }
   publishers {
-    mailer('$EMAIL_TO', true, false)
+    mailer('${EMAIL_TO}', true, false)
   }
 }
 

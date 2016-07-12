@@ -178,6 +178,12 @@ def devHosts = [
       - Name: `Validated_in_Dev`
       - Icon: Green empty star
       - Criteria: When the following downstream projects build successfully = `Development/Finish`
+      - Actions: Editable Email Notification
+        - Project Recipient List: As required
+        - Default Subject: `Successful build and test of Server SOE`
+        - Default Content: `Server SOE development build has passed and is ready for promotion to production.`
+        - Advanced Settings -> Triggers:
+          - Success: Send To Recipient List
     * Save the 'Server SOE' job.
     * Re-run the SOE_Bootstrap job to reset the 'manual modification' flag on the updated job.
 

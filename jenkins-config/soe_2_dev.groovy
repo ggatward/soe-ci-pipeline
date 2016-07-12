@@ -101,7 +101,7 @@ freeStyleJob('SOE/Development/Push_Kickstarts') {
   scm {
     cloneWorkspaceSCM {
       parentJobName('SOE/Server_SOE')
-      criteria('')
+      criteria('Successful')
     }
   }
   wrappers {
@@ -148,7 +148,7 @@ freeStyleJob('SOE/Development/Deploy_Puppet_Modules') {
   scm {
     cloneWorkspaceSCM {
       parentJobName('SOE/Server_SOE')
-      criteria('')
+      criteria('Successful')
     }
   }
   wrappers {
@@ -196,7 +196,7 @@ freeStyleJob('SOE/Development/Boot_Test_VMs') {
   scm {
     cloneWorkspaceSCM {
       parentJobName('SOE/Server_SOE')
-      criteria('')
+      criteria('Successful')
     }
   }
   wrappers {
@@ -253,7 +253,7 @@ for (desc in devHosts.keySet()) {
     scm {
       cloneWorkspaceSCM {
         parentJobName('SOE/Server_SOE')
-        criteria('')
+        criteria('Successful')
       }
     }
     wrappers {
@@ -299,7 +299,7 @@ echo "#####################################################"
     scm {
       cloneWorkspaceSCM {
         parentJobName('SOE/Server_SOE')
-        criteria('')
+        criteria('Successful')
       }
     }
     wrappers {

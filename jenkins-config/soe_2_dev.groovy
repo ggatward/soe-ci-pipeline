@@ -10,7 +10,9 @@ def devHosts = [
 ]
 */
 
-new GroovyShell().parse( new File( 'TestHosts.groovy' ) ).with {
+hudson.FilePath workspace = hudson.model.Executor.currentExecutor().getCurrentWorkspace()
+
+new GroovyShell().parse( new File( "${workspace}/TestHosts.groovy" ) ).with {
   LoadTestHosts()
 }
 

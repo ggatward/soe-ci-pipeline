@@ -7,8 +7,6 @@
 def devHosts = [
   'VMware_RHEL7':'buildbot1.lab.home.gatwards.org', 
   'VMware_RHEL6':'buildbot2.lab.home.gatwards.org',
-  'KVM_RHEL7':'buildbot3.lab.home.gatwards.org',
-  'KVM_RHEL6':'buildbot4.lab.home.gatwards.org',
 ]
 
 

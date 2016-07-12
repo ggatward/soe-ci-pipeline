@@ -10,7 +10,7 @@ def devHosts = [
 ]
 */
 
-new GroovyShell().parse( new File( '../TestHosts.groovy' ) ).with {
+new GroovyShell().parse( new File( 'TestHosts.groovy' ) ).with {
   LoadTestHosts()
 }
 

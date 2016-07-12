@@ -83,6 +83,10 @@ This is the root password used by Jenkins to access the build test hosts, and we
 * Check that the SOE_Bootstrap job is visible and correct via the Jenkins UI (We will need to edit parameters shortly).
     * you might need to reload the configuration from disk using 'Manage Jenkins -> Reload Configuration from Disk'.
 
+* The following manual configuration is needed as a workaround for the Promoted plugin as the actions cannot be scripted via JobDSL yet:
+
+
+
 
 ### Git Repository
 * Clone the following two git repos:
@@ -92,6 +96,8 @@ This is the root password used by Jenkins to access the build test hosts, and we
 _Make sure to create a development branch of the RHEL-SOE and use that in Jenkins - NOT the master branch_
 * Create a `jenkins` user with access to the SOE git repositories, and add the public SSH key for the `jenkins` user from the Jenkins server created earlier. This will allow Jenkins to merge and promote the SOE branches as part of the CI flow.
 * Configure the SOE_Bootstrap job, and set the `CI_GIT_URL` and `SOE_GIT_URL` String Parameters to reflect the location of the Git repositories for the CI scripts and SOE artefacts respectively, then save the job.
+
+
 
 
 ### Satellite 6
@@ -128,7 +134,6 @@ The PARAMETERS file contains global environment variables that are used by the C
 ```
 ORG=                   Name of your Organization, as defined in Satellite 6
 SATELLITE=             FQDN of the Satellite 6 server
-TESTVM_HOSTCOLLECTION= Name of the Host Collection containing VMs to be built
 PUPPET_LOCATIONS=      Comma seperated list of locations to enable the SOE puppet environment
 PUSH_USER=             Username used to login to Satellite 6
 KNOWN_HOSTS=           Location of the PUSH_USER's known_hosts file
@@ -137,7 +142,7 @@ EMAIL_TO=              Space seperated list of email addresses to recieve notifi
 ```
 
 * ....Configure test machine hostnames....
-
+* Configure test hosts in the soe_2_dev.groovy DSL job file
 
 ### Getting Started
 At this point, you should be good to go. In fact Jenkins may have already kicked off a build for you when you pushed to github.

@@ -3,39 +3,26 @@
 # Instruct Satellite to rebuild the test VMs
 #
 # e.g ${WORKSPACE}/scripts/buildtestvms.sh 'test'
-#
-# this will tell Foreman to rebuild all machines in hostgroup TESTVM_HOSTGROUP
 
 # Load common parameter variables
 . $(dirname "${0}")/common.sh
 
 if [[ -z ${PUSH_USER} ]] || [[ -z ${SATELLITE} ]]  || [[ -z ${RSA_ID} ]] \
-   || [[ -z ${ORG} ]] || [[ -z ${TESTVM_HOSTCOLLECTION} ]]; then
-  err "Environment variable PUSH_USER, SATELLITE, RSA_ID, ORG " \
-        "or TESTVM_HOSTCOLLECTION not set or not found."
+   || [[ -z ${ORG} ]]; then
+  err "Environment variable PUSH_USER, SATELLITE, RSA_ID or ORG " \
+        "not set or not found."
   exit ${WORKSPACE_ERR}
 fi
 
-# get our test machines into an array variable TEST_VM_LIST
-#function get_test_vm_list() {
-#  local J=0
-#  for I in $(ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
-#      "hammer content-host list --organization \"${ORG}\" \
-#          --host-collection \"$TESTVM_HOSTCOLLECTION\" \
-#          | tail -n +4 | cut -f2 -d \"|\" | head -n -1"); do
-#    TEST_VM_LIST[$J]=$I
-#    ((J+=1))
-#  done
-#}
-#get_test_vm_list # populate TEST_VM_LIST
 
+# Get the list of test hosts from the jenkins config DSL file
 function get_dev_vm_list() {
   hostlist=$(grep -A20 'def devHosts' ${WORKSPACE}/scripts/jenkins-config/soe_2_dev.groovy \
     | grep -B20 "]" | grep : | awk -F: '{ print $2 }' | tr -d "\',")
   TEST_VM_LIST=( $hostlist )
 }
 
-get_dev_vm_list
+get_dev_vm_list # Populate TEST_VM_LIST
 
 # Error out if no test VM's are available.
 if [ $(echo ${#TEST_VM_LIST[@]}) -eq 0 ]; then

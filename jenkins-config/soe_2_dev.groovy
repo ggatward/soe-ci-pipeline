@@ -208,7 +208,7 @@ freeStyleJob('SOE/Development/Boot_Test_VMs') {
 echo "#####################################################"
 echo "#                REBUILDING TEST VMS                #"
 echo "#####################################################"
-#/bin/bash -x ${WORKSPACE}/scripts/buildtestvms.sh 
+/bin/bash -x ${WORKSPACE}/scripts/buildtestvms.sh 
     ''')
   }
   publishers {

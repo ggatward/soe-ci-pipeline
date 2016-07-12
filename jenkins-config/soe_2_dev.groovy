@@ -3,18 +3,12 @@
  * Define all test hosts here. 
  * Format is 'Description':'hostname'
  *******************************************************************/
-/*
+
 def devHosts = [
   'Net1_RHEL7':'buildbot1.lab.home.gatwards.org', 
   'Net1_RHEL6':'buildbot2.lab.home.gatwards.org',
 ]
-*/
 
-hudson.FilePath workspace = hudson.model.Executor.currentExecutor().getCurrentWorkspace()
-
-GroovyShell shell = new GroovyShell()
-def script = shell.parse(new File("${workspace}/TestHosts.groovy"))
-script.LoadTestHosts()
 
 /****************************************************************************
  * Git Checkout

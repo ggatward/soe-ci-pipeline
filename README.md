@@ -51,19 +51,21 @@ EPEL https://fedoraproject.org/wiki/EPEL and Jenkins http://pkg.jenkins-ci.org/r
 * You will be prompted to run through the initial setup wizard. Allow Jenkins to install the default plugins.
 * Select the 'Manage Jenkins' link, followed by 'Manage Plugins'. You will need to add the following additional plugins:
 
-    * Build Timeout Plug-in 		(Default plugin)
+    * Build Timeout Plugin 		(Default plugin)
     * Credentials Binding Plugin	(Default plugin)
     * Git Plugin			(Default plugin)
     * Workspace Cleanup Plugin  	(Default plugin)
     * Job DSL Plugin
     * Environment Injector Plugin
     * Build Pipeline plugin
-    * Clone Workspace SCM Plug-in
+    * Clone Workspace SCM Plugin
     * Multiple SCMs Plugin
     * TAP Plugin
-    * Post-Build Script Plug-in
+    * Post-Build Script Plugin
     * JobFanIn Plugin
-    * Version Number Plug-in
+    * Version Number Plugin
+    * Promoted Builds Plugin
+    * Groovy Postbuild Plugin
 
 * To freshen up the Jenkins interface a little, I also recommend the following plugins also be installed:
   

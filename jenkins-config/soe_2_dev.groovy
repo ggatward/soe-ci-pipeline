@@ -17,6 +17,7 @@ freeStyleJob('SOE/SOE_Checkout') {
   description('Initiate build of Server SOE')
   displayName('Server SOE')
   blockOnDownstreamProjects()
+  label('master')
   authenticationToken('Satellite')
   properties {
 /*
@@ -85,6 +86,7 @@ freeStyleJob('SOE/Development/Push_Kickstarts') {
   displayName('1. Deploy kickstart files to Satellite')
   blockOnDownstreamProjects()
   blockOnUpstreamProjects()
+  label('master')
   properties {
     buildDiscarder {
       strategy {
@@ -132,6 +134,7 @@ freeStyleJob('SOE/Development/Deploy_Puppet_Modules') {
   displayName('2. Deploy SOE puppet modules to Satellite')
   blockOnDownstreamProjects()
   blockOnUpstreamProjects()
+  label('master')
   properties {
     buildDiscarder {
       strategy {
@@ -180,6 +183,7 @@ freeStyleJob('SOE/Development/Boot_Test_VMs') {
   displayName('3. Reboot test VMs')
   blockOnDownstreamProjects()
   blockOnUpstreamProjects()
+  label('master')
   properties {
     buildDiscarder {
       strategy {
@@ -234,6 +238,7 @@ for (desc in devHosts.keySet()) {
     displayName("4. Build ${desc} host")
     blockOnDownstreamProjects()
     blockOnUpstreamProjects()
+    label('master')
     properties {
       buildDiscarder {
         strategy {
@@ -283,6 +288,7 @@ echo "#####################################################"
     displayName("5. Test ${desc} host")
     blockOnDownstreamProjects()
     blockOnUpstreamProjects()
+    label('master')
     properties {
       buildDiscarder {
         strategy {
@@ -355,6 +361,7 @@ freeStyleJob("SOE/Development/Finish") {
   displayName("6. Notify Success")
   blockOnDownstreamProjects()
   blockOnUpstreamProjects()
+  label('master')
   properties {
     buildDiscarder {
       strategy {

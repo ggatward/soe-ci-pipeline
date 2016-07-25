@@ -38,6 +38,9 @@ else
   exit 1
 fi
 
+# Pause introduced to allow puppet installation/configuration to complete prior to the tests
+sleep 60
+
 # execute the tests in parallel on all test servers
 mkdir -p ${WORKSPACE}/test_results
 info "Starting TAPS tests on test server $TESTVM"

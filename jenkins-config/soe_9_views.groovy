@@ -7,6 +7,7 @@ buildPipelineView('SOE/Dev Build Pipeline') {
   displayedBuilds(1)
   alwaysAllowManualTrigger()
   triggerOnlyLatestJob(true) 
+  consoleOutputLinkStyle(OutputStyle.NewWindow)
   showPipelineDefinitionHeader(false)
     configure { 
         it / 'gridBuilder'(class: 'au.com.centrumsystems.hudson.plugin.buildpipeline.DownstreamProjectGridBuilder') {
@@ -22,6 +23,7 @@ buildPipelineView('SOE/Development/Build Pipeline') {
   displayedBuilds(3)
   alwaysAllowManualTrigger()
   triggerOnlyLatestJob(true)
+  consoleOutputLinkStyle(OutputStyle.NewWindow)
   showPipelineDefinitionHeader(false)
     configure {
         it / 'gridBuilder'(class: 'au.com.centrumsystems.hudson.plugin.buildpipeline.DownstreamProjectGridBuilder') {

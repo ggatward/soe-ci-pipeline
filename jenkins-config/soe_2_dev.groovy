@@ -169,6 +169,10 @@ echo "#####################################################"
     ''')
   }
   publishers {
+    groovyPostBuild {
+      script('errpattern = ~/ERROR.*/; manager.build.logFile.eachLine{ line -> errmatcher=errpattern.matcher(line) if (errmatcher.find()) { manager.buildFailure() } } if (manager.build.result.isWorseOrEqualTo(hudson.model.Result.FAILURE)) { manager.listener.logger.println("Errors detected in log. Setting build result to FAILED"); manager.createSummary("error.gif").appendText("r10k Error", false, false, false, "red") }')
+      sandbox(false)
+    }
     downstream('Boot_Test_VMs', 'SUCCESS')
     mailer('${EMAIL_TO}', true, false)
   }

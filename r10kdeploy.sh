@@ -38,9 +38,7 @@ ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
 for I in $(ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
     "hammer --csv capsule list" | tail -n +2 | awk -F, '{print $2}'); do
   if [ "${I}" != "${SATELLITE}" ]; then
-    echo "*** DEBUG ***"
-    echo "rsync --delete -va -e \"ssh -q -l ${PUSH_USER} -i ${RSA_ID}\" -va ${BASEDIR}/${R10K_ENV} ${I}:${BASEDIR}"
-#    rsync --delete -va -e "ssh -q -l ${PUSH_USER} -i ${RSA_ID}" -va ${BASEDIR}/${R10K_ENV} ${I}:${BASEDIR}
+    rsync --delete -va -e "ssh -q -l ${PUSH_USER} -i ${RSA_ID}" -va ${BASEDIR}/${R10K_ENV} ${I}:${BASEDIR}
   fi
 done
 

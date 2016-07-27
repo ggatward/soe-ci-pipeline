@@ -112,6 +112,7 @@ _Make sure to create a development branch of the RHEL-SOE and use that in Jenkin
 * Create a `jenkins` user on the satellite (both OS and Application)
 * Configure hammer for passwordless usage by creating a `~jenkins/.hammer/cli_config.yml` file. [More details here](http://blog.theforeman.org/2013/11/hammer-cli-for-foreman-part-i-setup.html).
 * Copy over the public key of the `jenkins` user on the Jenkins server to the `jenkins` user on the satellite and ensure that `jenkins` on the Jenkins server can do passwordless `ssh` to the satellite.
+* Create an SSH key for the jenkins user on the Satellite server. This will be needed to allow the user to copy puppet module artefacts to the Satellite capsules.
 * Configure a Compute Resource on the satellite (libvirt, VMWare or RHEV). This will be used to deploy test machines.
 
 * Create a Lifecycle path for the SOE (Library -> SOE Test -> SOE Production)
@@ -123,6 +124,26 @@ _Make sure to create a development branch of the RHEL-SOE and use that in Jenkin
 
 These CII scripts use r10k to deploy puppet environments to the Satellite server. Further information on the configuration of r10k and Satellite 6 can be found at https://access.redhat.com/blogs/1169563/posts/2216351
 * Install the r10k rubygem on the Satellite 6 server: `gem install r10k`
+* Create the `/etc/puppet/r10k/environments` directory on the Satellite server AND ALL CAPSULES. Set the permissions and ownership as shown, and add the jenkins user to the apache group.
+```
+mkdir -p /etc/puppet/r10k/environments
+chmod -R 2775 /etc/puppet/r10k
+chown -R apache:apache /etc/puppet/r10k
+usermod -a -G apache jenkins
+```
+* Modify the `/etc/puppet/puppet.conf` file on the Satellite and Capsules to include the new path in the `environmentpath` parameter in the `[master]` section:
+```
+[master]
+    ...
+    environmentpath = /etc/puppet/environments:/etc/puppet/r10k/environments
+    ...
+```
+* The Satellite/Capsule requires a restart for the updated puppet configuration to take effect.
+
+### Satellite 6 Capsules
+
+* Create a `jenkins` user on the capsule (OS)
+* Copy over the public key of the `jenkins` user on the Satellite server to the `jenkins` user on the capsule and ensure that `jenkins` on the Satellite server can do passwordless `ssh` to the capsule.
 
 
 ### Configuration

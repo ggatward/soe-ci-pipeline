@@ -20,18 +20,16 @@ freeStyleJob('SOE/SOE_Checkout') {
   label('master')
   authenticationToken('Satellite')
   properties {
-/*
     buildDiscarder {
       strategy {
         logRotator {
-          numToKeepStr('5')
+          numToKeepStr('10')
           artifactDaysToKeepStr('')
           artifactNumToKeepStr('')
           daysToKeepStr('')
         }
       }
     }
-*/
     configure { project ->
       project / 'properties' / 'hudson.plugins.promoted__builds.JobPropertyImpl'(plugin: 'promoted-builds@2.27') {
           activeProcessNames {

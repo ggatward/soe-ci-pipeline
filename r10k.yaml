@@ -8,5 +8,5 @@
 #git:
 #  private_key: /var/lib/jenkins/.ssh/id_rsa
 forge:
-  baseurl: 'https://forge.puppetlabs.com'
+  baseurl: 'https://forgeapi.puppetlabs.com'
 

@@ -17,7 +17,8 @@ export ROOTPASS
 
 # copy our tests to the test servers
 info "Setting up ssh keys for test server $TESTVM"
-sed -i.bak "/^$TESTVM[, ]/d" ${KNOWN_HOSTS} # remove test server from the file
+#sed -i.bak "/^$TESTVM[, ]/d" ${KNOWN_HOSTS} # remove test server from the file
+ssh-keygen -R $TESTVM
 
 # Copy Jenkins' SSH key to the newly created server(s)
 if [ $(sed -e 's/^.*release //' -e 's/\..*$//' /etc/redhat-release) -ge 7 ]; then

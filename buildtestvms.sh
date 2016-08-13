@@ -50,7 +50,10 @@ for I in "${TEST_VM_LIST[@]}"; do
     poweredOn)
       _STATUS=On
       ;;
-     up)
+    up)
+      _STATUS=On
+      ;;
+    on)
       _STATUS=On
       ;;
     shutoff)
@@ -60,6 +63,9 @@ for I in "${TEST_VM_LIST[@]}"; do
       _STATUS=Off
       ;;
     down)
+      _STATUS=Off
+      ;;
+    off)
       _STATUS=Off
       ;;
     *)

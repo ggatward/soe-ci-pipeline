@@ -20,7 +20,7 @@ while [[ ${buildvm} = true ]]; do
   echo -n "Checking if test server $TESTVM has rebuilt... "
   status=$(ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
       "hammer host info --name $TESTVM | \
-       grep -e \"Managed.*true\" -e \"Enabled.*true\" -e \"Build.*false\" | wc -l")
+       grep -e \"Managed.*yes\" -e \"Enabled.*yes\" -e \"Build.*no\" | wc -l")
   # Check if status is OK, ping reacts and SSH is there, then success!
   if [[ ${status} == 3 ]] && ping -c 1 -q $TESTVM && nc -w 1 $TESTVM 22; then
     # A PXE install takes at least 5 minutes. Detect if the VM simply rebooted without

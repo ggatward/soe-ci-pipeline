@@ -75,7 +75,7 @@ for I in "${TEST_VM_LIST[@]}"; do
   if [[ ${_STATUS} == 'On' ]]; then
     ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
         "hammer host stop --id $I"
-    sleep 10
+    sleep 30
     ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
         "hammer host start --id $I"
   elif [[ ${_STATUS} == 'Off' ]]; then

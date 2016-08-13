@@ -1,6 +1,6 @@
 ORG=GatwardIT
 SATELLITE=sat62.home.gatwards.org
-PUPPET_LOCATIONS=Default Location
+PUPPET_LOCATIONS=Home
 
 KNOWN_HOSTS=/var/lib/jenkins/.ssh/known_hosts
 RSA_ID=/var/lib/jenkins/.ssh/id_rsa

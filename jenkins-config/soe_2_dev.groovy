@@ -226,7 +226,7 @@ freeStyleJob('SOE/Development/Boot_Test_VMs') {
 echo "#####################################################"
 echo "#                REBUILDING TEST VMS                #"
 echo "#####################################################"
-#/bin/bash -x ${WORKSPACE}/scripts/buildtestvms.sh 
+/bin/bash -x ${WORKSPACE}/scripts/buildtestvms.sh 
     ''')
   }
   publishers {
@@ -284,7 +284,7 @@ for (desc in devHosts.keySet()) {
 echo "#####################################################"
 echo "#          WAITING FOR BUILD COMPLETION             #"
 echo "#####################################################"
-#/bin/bash -x \${WORKSPACE}/scripts/waitforbuild.sh ${host}
+/bin/bash -x \${WORKSPACE}/scripts/waitforbuild.sh ${host}
       """)
     }
     publishers {

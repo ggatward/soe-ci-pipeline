@@ -131,7 +131,7 @@ chmod -R 2775 /etc/puppet/r10k
 chown -R apache:apache /etc/puppet/r10k
 usermod -a -G apache jenkins
 ```
-* Modify the `/etc/puppet/puppet.conf` file on the Satellite and Capsules to include the new path in the `environmentpath` parameter in the `[master]` section:
+* Modify the `/etc/puppet/puppet.conf` file on the Satellite and Capsules to include the new path in the `environmentpath` parameter in the `[master]` section:  ([main] in Satellite 6.2)
 ```
 [master]
     ...

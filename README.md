@@ -100,14 +100,16 @@ _Make sure to create a development branch of the RHEL-SOE and use that in Jenkin
 
 ### Satellite 6
 
-* Install and register Red Hat Satellite 6 as per the [instructions](https://access.redhat.com/documentation/en-US/Red_Hat_Satellite/6.1/html/Installation_Guide/index.html).
+The CII scripts were originally written and tested on Satellite 6.1, but have since been updated to work with 6.2.x.
+
+* Install and register Red Hat Satellite 6.x as per the [instructions](https://access.redhat.com/documentation/en-US/Red_Hat_Satellite/6.1/html/Installation_Guide/index.html).
 * Enable the following Red Hat repos for both RHEL 6 and RHEL 7:
   - Server Kickstart,
   - Server RPMs,
   - Extra RPMs,
   - Optional RPMs,
   - Common RPMs Server
-  - Satellite 6.1 Tools
+  - Satellite 6.x Tools
 * Create a sync plan that does a daily sync of the RHEL product and perform an initial sync.
 * Create a `jenkins` user on the satellite (both OS and Application)
 * Configure hammer for passwordless usage by creating a `~jenkins/.hammer/cli_config.yml` file. [More details here](http://blog.theforeman.org/2013/11/hammer-cli-for-foreman-part-i-setup.html).
@@ -115,10 +117,9 @@ _Make sure to create a development branch of the RHEL-SOE and use that in Jenkin
 * Create an SSH key for the jenkins user on the Satellite server. This will be needed to allow the user to copy puppet module artefacts to the Satellite capsules.
 * Configure a Compute Resource on the satellite (libvirt, VMWare or RHEV). This will be used to deploy test machines.
 
-* Create a Lifecycle path for the SOE (Library -> SOE Test -> SOE Production)
-* Create a Content View called `Server SOE` that contains all required repositories for both RHEL 6 and RHEL 7, and publish this to the Library and the SOE Test environment. Be sure to include any custom repositories.
-* Create an Activation Key for both RHEL 6 and RHEL 7, using the Content View from `SOE Test`
-* Create a hostgroup (I called mine 'Jenkins Test Servers') that deploys machines on to the Compute Resource that you configured earlier, and uses the activation key that you created. Create a default root password and make a note of it.
+* Create a Content View called `RHEL Server` that contains all required repositories for both RHEL 6 and RHEL 7, and publish this to the Library. Be sure to include any custom repositories.
+* Create an Activation Key for both RHEL 6 and RHEL 7, using the `RHEL Server` Content View from `Library`
+* Create a hostgroup (I called mine 'RHEL6-SOE' and 'RHEL7-SOE') that deploys machines on to the Compute Resource that you configured earlier, and uses the activation key that you created. Create a default root password and make a note of it.
 * Manually provision the test servers on your defined Compute Resource and deploy them. 
 * Ensure that the test servers are configured to boot from network BEFORE boot from local hard drive in thier BIOS configurtion. This is to ensure that when Jenkins triggers Satellite 6 to rebuild the test hosts, they will perform a PXE installation.
 
@@ -131,9 +132,9 @@ chmod -R 2775 /etc/puppet/r10k
 chown -R apache:apache /etc/puppet/r10k
 usermod -a -G apache jenkins
 ```
-* Modify the `/etc/puppet/puppet.conf` file on the Satellite and Capsules to include the new path in the `environmentpath` parameter in the `[master]` section:  ([main] in Satellite 6.2)
+* Modify the `/etc/puppet/puppet.conf` file on the Satellite and Capsules to include the new path in the `environmentpath` parameter in the `[main]` section:  ([master] in Satellite 6.1)
 ```
-[master]
+[main]
     ...
     environmentpath = /etc/puppet/environments:/etc/puppet/r10k/environments
     ...
@@ -143,7 +144,7 @@ usermod -a -G apache jenkins
 ### Satellite 6 Capsules
 
 * Create a `jenkins` user on the capsule (OS)
-* Copy over the public key of the `jenkins` user on the Satellite server to the `jenkins` user on the capsule and ensure that `jenkins` on the Satellite server can do passwordless `ssh` to the capsule.
+* Copy over the public key of the `jenkins` user on the Satellite server to the `jenkins` user on the capsule and ensure that `jenkins` on the Satellite server can do passwordless `ssh` to the capsule. The Jenkins process uses rsync over SSH to clone the SOE puppet environment to the Capsules.
 
 
 ### Configuration
@@ -216,6 +217,9 @@ Develop your SOE build in your DEVELOPMENT branch checkout of RHEL-SOE. Jenkins 
 
 
 ### Building the Development SOE
+
+The first time you build the SOE, the initial artefacts will be generated and pushed to the Satellite server. One thing that needs to be done AFTER this first build is to associate the Development SOE Kickstart template with the Development SOE hostgroups, so that the test build hosts will kickstart from the DEV products. This is done by editing the SOE_dev_kickstart template and setting the association tab to contain not only the relvant OS selections, but also the development host group and environments.
+
 
 When you are ready to test the SOE in the DEVELOPMENT environment, simply run the 'Server SOE' job from the SOE folder. Alternatively, you can use the 'Run' button from the 'Dev SOE Pipeline' view.
 The build will progress along the pipeline, with all configured test hosts being rebuilt in parallel. Once the hosts are built, they will have the test cases run against them. Only if *ALL* of the hosts test cases pass will the Dev build be marked as successful.

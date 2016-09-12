@@ -5,11 +5,11 @@
 # Load common parameter variables
 . $(dirname "${0}")/common.sh
 
-if [[ -z "$1" ]] || [[ ! -d "$1" ]]; then
-  usage "$0 <directory containing kickstart files>"
-  exit ${NOARGS}
-fi
-workdir=$1
+#if [[ -z "$1" ]] || [[ ! -d "$1" ]]; then
+#  usage "$0 <directory containing kickstart files>"
+#  exit ${NOARGS}
+#fi
+#workdir=$1
 
 if [[ -z ${WORKSPACE} ]] || [[ ! -w ${WORKSPACE} ]]; then
   err "Environment variable 'WORKSPACE' not set or not found"

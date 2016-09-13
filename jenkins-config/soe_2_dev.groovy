@@ -65,10 +65,16 @@ freeStyleJob('SOE/SOE_Checkout') {
       propertiesFile('scripts/PARAMETERS')
     }
   }
+  steps {
+    shell('''
+echo SOE_COMMIT=${GIT_COMMIT_1} > ${WORKSPACE}/gitvars
+    ''')
+  }
   publishers {
     downstream('Development/Push_Kickstarts', 'SUCCESS')
     publishCloneWorkspace('**') {
       criteria('Successful')
+      overrideDefaultExcludes(true)
     }
     mailer('${EMAIL_TO}', true, false)
   }

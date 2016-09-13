@@ -13,68 +13,62 @@ def prodHosts = [
 /****************************************************************************
  * Git Checkout
  ****************************************************************************/
-/*
-freeStyleJob('SOE/SOE_Checkout') {
-  description('Initiate build of Server SOE')
-  displayName('Server SOE')
+freeStyleJob('SOE/Production/Promote') {
+  description('Promote SOE elements to production')
+  displayName('Promote SOE')
   blockOnDownstreamProjects()
   label('master')
-  authenticationToken('Satellite')
+  parameters {
+    stringParam('SOE_COMMIT', '111', 'Git Commit ID')
+  }
   properties {
     buildDiscarder {
       strategy {
         logRotator {
-          numToKeepStr('10')
+          numToKeepStr('5')
           artifactDaysToKeepStr('')
           artifactNumToKeepStr('')
           daysToKeepStr('')
         }
       }
     }
-    configure { project ->
-      project / 'properties' / 'hudson.plugins.promoted__builds.JobPropertyImpl'(plugin: 'promoted-builds@2.27') {
-          activeProcessNames {
-            string('Validated_in_Dev')
-            string('Promoted_to_Production')
-          }
-      }
-    }
   }
   multiscm {
-    git {
-      remote {
-        url("${CI_GIT_URL}")
-      }
-      branch('development')
-      shallowClone(true)
-      createTag(false)
-      relativeTargetDir('scripts')
+    cloneWorkspaceSCM {
+      parentJobName('SOE/Production/Promote')
+      criteria('Successful')
     }
     git {
       remote {
         url("${SOE_GIT_URL}")
       }
-      branch('development')
-      shallowClone(true)
-      createTag(false)
-      relativeTargetDir('soe')
+      branch('master')
+      relativeTargetDir('soemaster')
     }
   }
   wrappers {
     preBuildCleanup()
+    buildUserVars()
     environmentVariables {
       propertiesFile('scripts/PARAMETERS')
     }
   }
+  steps {
+    shell('''
+echo "#####################################################"
+echo "#            UPDATING PRODUCTION STRINGS            #"
+echo "#####################################################"
+/bin/bash -x ${WORKSPACE}/scripts/promote.sh ${SOE_COMMIT}
+    ''')
+  }
   publishers {
-    downstream('Development/Push_Kickstarts', 'SUCCESS')
+    downstream('Production/Push_Kickstarts', 'SUCCESS')
     publishCloneWorkspace('**') {
       criteria('Successful')
     }
     mailer('${EMAIL_TO}', true, false)
   }
 }
-*/
 
 
 /****************************************************************************

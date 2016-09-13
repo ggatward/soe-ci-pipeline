@@ -23,7 +23,7 @@
         <hudson.model.StringParameterDefinition>
           <name>SOE_GIT_URL</name>
           <description>GIT URL for SOE Artefacts</description>
-          <defaultValue>https://github.com/ggatward/RHEL-SOE</defaultValue>
+          <defaultValue>git@github.com:ggatward/RHEL-SOE.git</defaultValue>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>

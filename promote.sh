@@ -26,24 +26,28 @@ fi
 
 # First we'll set some global options if they are not currently there:
 git config --global user.name "Jenkins CI/CD"
+git config --global user.email jenkins@example.com
 git config --global push.default simple
 
 # Next, what we will do here is to merge the current good 'dev' branch into 'master'
 cd ${WORKSPACE}/soemaster
 git merge ${SOE_COMMIT}
 
-
 # Replace all instances of SOE_dev_ with SOE_ in each .erb file (snippet call entry + snippet names)
 sed -i 's/SOE_dev_/SOE_/g' ${WORKSPACE}/soemaster/kickstarts/*.erb 
 
-
 # Create version file - read latest git tag, tag+1
+# Read current tag list so we can increment the version
+git tag
+
+
 echo `date '+%H%M%S'` > ${WORKSPACE}/soemaster/version
 
 
-# Merge+push, create new tag
+# Commit the changes, push and tag
 git commit -a -m "Automatic promotion by Jenkins"
 git push origin HEAD:master
-
+git tag -a v0.1 -m "Auto Tag by Jenkins"
+git push origin --tags
 
 

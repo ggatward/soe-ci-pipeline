@@ -23,10 +23,15 @@ fi
 # /scripts   - the CI scripts that were checked out pre-dev build
 # /soe       - the DEV soe that was checked out and tested
 # /soemaster - the latest 'master' branch
-#
-# What we will do here is to merge the current good 'dev' branch into 'master'
+
+# First we'll set some global options if they are not currently there:
+git config --global user.name "Jenkins CI/CD"
+git config --global push.default simple
+
+# Next, what we will do here is to merge the current good 'dev' branch into 'master'
 cd ${WORKSPACE}/soemaster
 git merge ${SOE_COMMIT}
+git push origin master
 
 
 # Replace all instances of SOE_dev_ with SOE_ in each .erb file (snippet call entry + snippet names)
@@ -38,9 +43,7 @@ sed -i 's/SOE_dev_/SOE_/g' ${WORKSPACE}/soemaster/kickstarts/*.erb
 
 
 # Merge+push, create new tag
-cd ${WORKSPACE}/soemaster
 git commit -a -m "Automatic promotion by Jenkins"
-git push
 
 
 

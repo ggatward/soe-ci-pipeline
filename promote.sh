@@ -31,7 +31,6 @@ git config --global push.default simple
 # Next, what we will do here is to merge the current good 'dev' branch into 'master'
 cd ${WORKSPACE}/soemaster
 git merge ${SOE_COMMIT}
-git push origin master
 
 
 # Replace all instances of SOE_dev_ with SOE_ in each .erb file (snippet call entry + snippet names)
@@ -39,11 +38,12 @@ sed -i 's/SOE_dev_/SOE_/g' ${WORKSPACE}/soemaster/kickstarts/*.erb
 
 
 # Create version file - read latest git tag, tag+1
-
+echo `date '+%H%M%S'` > ${WORKSPACE}/soemaster/version
 
 
 # Merge+push, create new tag
 git commit -a -m "Automatic promotion by Jenkins"
+git push origin HEAD:master
 
 
 

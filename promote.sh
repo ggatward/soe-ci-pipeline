@@ -39,7 +39,7 @@ sed -i 's/SOE_dev_/SOE_/g' ${WORKSPACE}/soemaster/kickstarts/*.erb
 
 # Merge+push, create new tag
 cd ${WORKSPACE}/soemaster
-git commit -a "Automatic promotion by Jenkins"
+git commit -a -m "Automatic promotion by Jenkins"
 git push
 
 

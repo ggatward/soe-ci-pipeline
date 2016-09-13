@@ -49,9 +49,13 @@ echo `date '+%H%M%S'` > ${WORKSPACE}/soemaster/version
 
 
 # Commit the changes, push and tag
-git commit -a -m "Automatic promotion by Jenkins"
+git commit -a -m "Automatic promotion initiated by ${BUILD_USER}"
 git push origin HEAD:master
 git tag -a ${TAG} -m "Auto Tag by Jenkins"
 git push origin --tags
 
+
+# Clean out the workspace ready for the push phases
+rm -rf ${WORKSPACE}/soe
+mv ${WORKSPACE}/soemaster ${WORKSPACE}/soe
 

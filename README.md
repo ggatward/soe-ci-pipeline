@@ -66,6 +66,7 @@ EPEL https://fedoraproject.org/wiki/EPEL and Jenkins http://pkg.jenkins-ci.org/r
     * Version Number Plugin
     * Promoted Builds Plugin
     * Groovy Postbuild Plugin
+    * User Build Vars Plugin
 
 * To freshen up the Jenkins interface a little, I also recommend the following plugins also be installed:
   

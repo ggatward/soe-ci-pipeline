@@ -38,8 +38,12 @@ sed -i 's/SOE_dev_/SOE_/g' ${WORKSPACE}/soemaster/kickstarts/*.erb
 
 # Create version file - read latest git tag, tag+1
 # Read current tag list so we can increment the version
-git tag
+tag=$(git describe $(git rev-list --tags --max-count=1))
 
+tagver=$(( $(echo $tag | cut -f2 -d.) + 1 ))
+
+echo tagver=$tagver
+TAG="v0.${tagver}"
 
 echo `date '+%H%M%S'` > ${WORKSPACE}/soemaster/version
 
@@ -47,7 +51,7 @@ echo `date '+%H%M%S'` > ${WORKSPACE}/soemaster/version
 # Commit the changes, push and tag
 git commit -a -m "Automatic promotion by Jenkins"
 git push origin HEAD:master
-git tag -a v0.1 -m "Auto Tag by Jenkins"
+git tag -a ${TAG} -m "Auto Tag by Jenkins"
 git push origin --tags
 
 

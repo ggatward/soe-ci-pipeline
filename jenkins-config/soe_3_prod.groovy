@@ -15,7 +15,7 @@ def prodHosts = [
  ****************************************************************************/
 freeStyleJob('SOE/Production/Promote') {
   description('Promote SOE elements to production')
-  displayName('Promote SOE')
+  displayName('1. Promote SOE artefacts')
   blockOnDownstreamProjects()
   label('master')
   parameters {
@@ -35,7 +35,7 @@ freeStyleJob('SOE/Production/Promote') {
   }
   multiscm {
     cloneWorkspaceSCM {
-      parentJobName('SOE/Production/Promote')
+      parentJobName('SOE/SOE_Checkout')
       criteria('Successful')
     }
     git {
@@ -62,7 +62,7 @@ echo "#####################################################"
     ''')
   }
   publishers {
-    downstream('Production/Push_Kickstarts', 'SUCCESS')
+    downstream('Push_Kickstarts', 'SUCCESS')
     publishCloneWorkspace('**') {
       criteria('Successful')
     }
@@ -76,7 +76,7 @@ echo "#####################################################"
  ****************************************************************************/
 freeStyleJob('SOE/Production/Push_Kickstarts') {
   description('Push Kickstarts to Satellite 6')
-  displayName('1. Deploy kickstart files to Satellite')
+  displayName('2. Deploy kickstart files to Satellite')
   blockOnDownstreamProjects()
   blockOnUpstreamProjects()
   label('master')
@@ -124,7 +124,7 @@ echo "#####################################################"
  ****************************************************************************/
 freeStyleJob('SOE/Production/Deploy_Puppet_Modules') {
   description('Trigger r10k on Satellite 6 to pull required Puppet modules')
-  displayName('2. Deploy SOE puppet modules to Satellite')
+  displayName('3. Deploy SOE puppet modules to Satellite')
   blockOnDownstreamProjects()
   blockOnUpstreamProjects()
   label('master')
@@ -188,7 +188,7 @@ if (manager.build.result.isWorseOrEqualTo(hudson.model.Result.FAILURE)) {
  ****************************************************************************/
 freeStyleJob('SOE/Production/Boot_Test_VMs') {
   description('Reboot all test VMs to trigger PXE build')
-  displayName('3. Reboot test VMs')
+  displayName('4. Reboot test VMs')
   blockOnDownstreamProjects()
   blockOnUpstreamProjects()
   label('master')
@@ -243,7 +243,7 @@ for (desc in prodHosts.keySet()) {
    *******************************************************************/
   freeStyleJob("SOE/Production/Build_${desc}") {
     description("Monitor the build status of ${desc} - ${host}")
-    displayName("4. Build ${desc} host")
+    displayName("5. Build ${desc} host")
     blockOnDownstreamProjects()
     blockOnUpstreamProjects()
     label('master')
@@ -293,7 +293,7 @@ echo "#####################################################"
    *******************************************************************/
   freeStyleJob("SOE/Production/Test_${desc}") {
     description("Run functional tests on ${desc} - ${host}")
-    displayName("5. Test ${desc} host")
+    displayName("6. Test ${desc} host")
     blockOnDownstreamProjects()
     blockOnUpstreamProjects()
     label('master')
@@ -366,7 +366,7 @@ for (desc in prodHosts.keySet()) {
  *******************************************************************/
 freeStyleJob("SOE/Production/Finish") {
   description("Notify successful completion of all Dev tests. Triggers promotions.")
-  displayName("6. Notify Success")
+  displayName("7. Notify Success")
   blockOnDownstreamProjects()
   blockOnUpstreamProjects()
   label('master')

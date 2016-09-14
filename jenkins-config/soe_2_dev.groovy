@@ -35,6 +35,7 @@ freeStyleJob('SOE/SOE_Checkout') {
           activeProcessNames {
             string('Validated_in_Dev')
             string('Promoted_to_Production')
+            string('Validated_in_Production')
           }
       }
     }

@@ -25,7 +25,7 @@ function get_dev_vm_list() {
 }
 
 function get_prod_vm_list() {
-  hostlist=$(grep -A20 'def devHosts' ${WORKSPACE}/scripts/jenkins-config/soe_3_prod.groovy \
+  hostlist=$(grep -A20 'def prodHosts' ${WORKSPACE}/scripts/jenkins-config/soe_3_prod.groovy \
     | grep -B20 "]" | grep : | awk -F: '{ print $2 }' | tr -d "\',")
   TEST_VM_LIST=( $hostlist )
 }

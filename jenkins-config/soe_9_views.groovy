@@ -28,7 +28,7 @@ buildPipelineView('SOE/Prod Build Pipeline') {
     configure {
         it / 'gridBuilder'(class: 'au.com.centrumsystems.hudson.plugin.buildpipeline.DownstreamProjectGridBuilder') {
             firstJob('SOE/Production/Promote')
-            firstJobLink('job/SOE/view/Prod%20Build%20Pipeline/job/Production/job/Promote/')
+            firstJobLink('job/SOE/view/Prod%20Build%20Pipeline/job/Production/job/Promote/build')
         }
     }
 }
@@ -61,7 +61,7 @@ buildPipelineView('SOE/Production/Build Pipeline') {
     configure {
         it / 'gridBuilder'(class: 'au.com.centrumsystems.hudson.plugin.buildpipeline.DownstreamProjectGridBuilder') {
             firstJob('SOE/Production/Promote')
-            firstJobLink('job/SOE/view/Prod%20Build%20Pipeline/job/Production/job/Promote/')
+            firstJobLink('job/SOE/view/Prod%20Build%20Pipeline/job/Production/job/Promote/build')
         }
     }
 }

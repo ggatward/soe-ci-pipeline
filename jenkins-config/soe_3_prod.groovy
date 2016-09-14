@@ -150,7 +150,7 @@ freeStyleJob('SOE/Production/Deploy_Puppet_Modules') {
     preBuildCleanup()
     environmentVariables {
       propertiesFile('scripts/PARAMETERS')
-      env('R10K_ENV', 'RHEL_SOE_production')
+      env('R10K_ENV', 'RHEL_SOE_master')
     }
   }
   steps {
@@ -221,7 +221,7 @@ freeStyleJob('SOE/Production/Boot_Test_VMs') {
 echo "#####################################################"
 echo "#                REBUILDING TEST VMS                #"
 echo "#####################################################"
-/bin/bash -x ${WORKSPACE}/scripts/buildtestvms.sh 
+/bin/bash -x ${WORKSPACE}/scripts/buildtestvms.sh PROD
     ''')
   }
   publishers {

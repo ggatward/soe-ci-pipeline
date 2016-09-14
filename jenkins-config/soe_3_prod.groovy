@@ -34,9 +34,19 @@ freeStyleJob('SOE/Production/Promote') {
     }
   }
   multiscm {
-    cloneWorkspaceSCM {
+/*    cloneWorkspaceSCM {
       parentJobName('SOE/SOE_Checkout')
       criteria('Successful')
+    }
+*/
+    git {
+      remote {
+        url("${CI_GIT_URL}")
+      }
+      branch('development')
+      shallowClone(true)
+      createTag(false)
+      relativeTargetDir('scripts')
     }
     git {
       remote {

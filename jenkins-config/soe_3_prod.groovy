@@ -4,43 +4,41 @@
  * Format is 'Description':'hostname'
  *******************************************************************/
 
-def devHosts = [
-  'VMware_RHEL7':'buildbot1.lab.home.gatwards.org', 
-  'VMware_RHEL6':'buildbot2.lab.home.gatwards.org',
+def prodHosts = [
+  'VMware_RHEL7':'buildbot3.lab.home.gatwards.org', 
+  'VMware_RHEL6':'buildbot4.lab.home.gatwards.org',
 ]
 
 
 /****************************************************************************
  * Git Checkout
  ****************************************************************************/
-freeStyleJob('SOE/SOE_Checkout') {
-  description('Initiate build of Server SOE')
-  displayName('Server SOE')
+freeStyleJob('SOE/Production/Promote') {
+  description('Promote SOE elements to production')
+  displayName('1. Promote SOE artefacts')
   blockOnDownstreamProjects()
   label('master')
-  authenticationToken('Satellite')
+  parameters {
+    stringParam('SOE_COMMIT', '111', 'Git Commit ID')
+  }
   properties {
     buildDiscarder {
       strategy {
         logRotator {
-          numToKeepStr('10')
+          numToKeepStr('5')
           artifactDaysToKeepStr('')
           artifactNumToKeepStr('')
           daysToKeepStr('')
         }
       }
     }
-    configure { project ->
-      project / 'properties' / 'hudson.plugins.promoted__builds.JobPropertyImpl'(plugin: 'promoted-builds@2.27') {
-          activeProcessNames {
-            string('Validated_in_Dev')
-            string('Promoted_to_Production')
-            string('Validated_in_Production')
-          }
-      }
-    }
   }
   multiscm {
+/*    cloneWorkspaceSCM {
+      parentJobName('SOE/SOE_Checkout')
+      criteria('Successful')
+    }
+*/
     git {
       remote {
         url("${CI_GIT_URL}")
@@ -54,41 +52,41 @@ freeStyleJob('SOE/SOE_Checkout') {
       remote {
         url("${SOE_GIT_URL}")
       }
-      branch('development')
-      shallowClone(true)
-      createTag(false)
-      relativeTargetDir('soe')
+      branch('master')
+      relativeTargetDir('soemaster')
     }
   }
   wrappers {
     preBuildCleanup()
+    buildUserVars()
     environmentVariables {
       propertiesFile('scripts/PARAMETERS')
     }
   }
   steps {
     shell('''
-echo SOE_COMMIT=${GIT_COMMIT_1} > ${WORKSPACE}/gitvars
+echo "#####################################################"
+echo "#            UPDATING PRODUCTION STRINGS            #"
+echo "#####################################################"
+/bin/bash -x ${WORKSPACE}/scripts/promote.sh ${SOE_COMMIT}
     ''')
   }
   publishers {
-    downstream('Development/Push_Kickstarts', 'SUCCESS')
+    downstream('Push_Kickstarts', 'SUCCESS')
     publishCloneWorkspace('**') {
       criteria('Successful')
-      overrideDefaultExcludes(true)
     }
     mailer('${EMAIL_TO}', true, false)
   }
 }
 
 
-
 /****************************************************************************
  * Push Kickstarts
  ****************************************************************************/
-freeStyleJob('SOE/Development/Push_Kickstarts') {
+freeStyleJob('SOE/Production/Push_Kickstarts') {
   description('Push Kickstarts to Satellite 6')
-  displayName('1. Deploy kickstart files to Satellite')
+  displayName('2. Deploy kickstart files to Satellite')
   blockOnDownstreamProjects()
   blockOnUpstreamProjects()
   label('master')
@@ -106,7 +104,7 @@ freeStyleJob('SOE/Development/Push_Kickstarts') {
   }
   scm {
     cloneWorkspaceSCM {
-      parentJobName('SOE/SOE_Checkout')
+      parentJobName('SOE/Production/Promote')
       criteria('Successful')
     }
   }
@@ -134,9 +132,9 @@ echo "#####################################################"
 /****************************************************************************
  * Deploy Puppet Modules
  ****************************************************************************/
-freeStyleJob('SOE/Development/Deploy_Puppet_Modules') {
+freeStyleJob('SOE/Production/Deploy_Puppet_Modules') {
   description('Trigger r10k on Satellite 6 to pull required Puppet modules')
-  displayName('2. Deploy SOE puppet modules to Satellite')
+  displayName('3. Deploy SOE puppet modules to Satellite')
   blockOnDownstreamProjects()
   blockOnUpstreamProjects()
   label('master')
@@ -154,7 +152,7 @@ freeStyleJob('SOE/Development/Deploy_Puppet_Modules') {
   }
   scm {
     cloneWorkspaceSCM {
-      parentJobName('SOE/SOE_Checkout')
+      parentJobName('SOE/Production/Promote')
       criteria('Successful')
     }
   }
@@ -162,7 +160,7 @@ freeStyleJob('SOE/Development/Deploy_Puppet_Modules') {
     preBuildCleanup()
     environmentVariables {
       propertiesFile('scripts/PARAMETERS')
-      env('R10K_ENV', 'RHEL_SOE_development')
+      env('R10K_ENV', 'RHEL_SOE_master')
     }
   }
   steps {
@@ -198,9 +196,9 @@ if (manager.build.result.isWorseOrEqualTo(hudson.model.Result.FAILURE)) {
 /****************************************************************************
  * Reboot Test VMs
  ****************************************************************************/
-freeStyleJob('SOE/Development/Boot_Test_VMs') {
+freeStyleJob('SOE/Production/Boot_Test_VMs') {
   description('Reboot all test VMs to trigger PXE build')
-  displayName('3. Reboot test VMs')
+  displayName('4. Reboot test VMs')
   blockOnDownstreamProjects()
   blockOnUpstreamProjects()
   label('master')
@@ -218,7 +216,7 @@ freeStyleJob('SOE/Development/Boot_Test_VMs') {
   }
   scm {
     cloneWorkspaceSCM {
-      parentJobName('SOE/SOE_Checkout')
+      parentJobName('SOE/Production/Promote')
       criteria('Successful')
     }
   }
@@ -233,7 +231,7 @@ freeStyleJob('SOE/Development/Boot_Test_VMs') {
 echo "#####################################################"
 echo "#                REBUILDING TEST VMS                #"
 echo "#####################################################"
-/bin/bash -x ${WORKSPACE}/scripts/buildtestvms.sh DEV 
+/bin/bash -x ${WORKSPACE}/scripts/buildtestvms.sh PROD
     ''')
   }
   publishers {
@@ -247,15 +245,15 @@ echo "#####################################################"
  * Loop through each host...
  *******************************************************************/
 
-for (desc in devHosts.keySet()) {
-  def host = devHosts.get(desc)
+for (desc in prodHosts.keySet()) {
+  def host = prodHosts.get(desc)
 
   /*******************************************************************
    * Create the Build-Watch jobs for each host
    *******************************************************************/
-  freeStyleJob("SOE/Development/Build_${desc}") {
+  freeStyleJob("SOE/Production/Build_${desc}") {
     description("Monitor the build status of ${desc} - ${host}")
-    displayName("4. Build ${desc} host")
+    displayName("5. Build ${desc} host")
     blockOnDownstreamProjects()
     blockOnUpstreamProjects()
     label('master')
@@ -276,7 +274,7 @@ for (desc in devHosts.keySet()) {
     }
     scm {
       cloneWorkspaceSCM {
-        parentJobName('SOE/SOE_Checkout')
+        parentJobName('SOE/Production/Promote')
         criteria('Successful')
       }
     }
@@ -303,9 +301,9 @@ echo "#####################################################"
   /*******************************************************************
    * Create the Test jobs for each host
    *******************************************************************/
-  freeStyleJob("SOE/Development/Test_${desc}") {
+  freeStyleJob("SOE/Production/Test_${desc}") {
     description("Run functional tests on ${desc} - ${host}")
-    displayName("5. Test ${desc} host")
+    displayName("6. Test ${desc} host")
     blockOnDownstreamProjects()
     blockOnUpstreamProjects()
     label('master')
@@ -323,7 +321,7 @@ echo "#####################################################"
     }
     scm {
       cloneWorkspaceSCM {
-        parentJobName('SOE/SOE_Checkout')
+        parentJobName('SOE/Production/Promote')
         criteria('Successful')
       }
     }
@@ -369,16 +367,16 @@ echo "#####################################################"
  */
 
 def joblist = ('')
-for (desc in devHosts.keySet()) {
+for (desc in prodHosts.keySet()) {
   joblist = "${joblist}" + "Test_${desc},"
 }
 
 /*******************************************************************
  * Job that traps successful completion of all tests
  *******************************************************************/
-freeStyleJob("SOE/Development/Finish") {
+freeStyleJob("SOE/Production/Finish") {
   description("Notify successful completion of all Dev tests. Triggers promotions.")
-  displayName("6. Notify Success")
+  displayName("7. Notify Success")
   blockOnDownstreamProjects()
   blockOnUpstreamProjects()
   label('master')

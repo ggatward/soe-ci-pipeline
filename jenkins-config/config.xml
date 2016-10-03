@@ -4,6 +4,14 @@
   <description>Initial bootstrap Job DSL to (re)create the SOE build pipeline jobs from GIT SCM.</description>
   <keepDependencies>false</keepDependencies>
   <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>-1</daysToKeep>
+        <numToKeep>5</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
     <com.synopsys.arc.jenkinsci.plugins.jobrestrictions.jobs.JobRestrictionProperty plugin="job-restrictions@0.4"/>
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
@@ -15,7 +23,7 @@
         <hudson.model.StringParameterDefinition>
           <name>SOE_GIT_URL</name>
           <description>GIT URL for SOE Artefacts</description>
-          <defaultValue>https://github.com/ggatward/RHEL-SOE</defaultValue>
+          <defaultValue>git@github.com:ggatward/RHEL-SOE.git</defaultValue>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>

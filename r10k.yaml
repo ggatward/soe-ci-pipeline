@@ -5,4 +5,8 @@
     remote: https://github.com/ggatward/RHEL-SOE
     basedir: /etc/puppet/r10k/environments
     prefix: true
+#git:
+#  private_key: /var/lib/jenkins/.ssh/id_rsa
+forge:
+  baseurl: 'https://forgeapi.puppetlabs.com'
 

@@ -17,7 +17,8 @@ export ROOTPASS
 
 # copy our tests to the test servers
 info "Setting up ssh keys for test server $TESTVM"
-sed -i.bak "/^$TESTVM[, ]/d" ${KNOWN_HOSTS} # remove test server from the file
+#sed -i.bak "/^$TESTVM[, ]/d" ${KNOWN_HOSTS} # remove test server from the file
+ssh-keygen -R $TESTVM
 
 # Copy Jenkins' SSH key to the newly created server(s)
 if [ $(sed -e 's/^.*release //' -e 's/\..*$//' /etc/redhat-release) -ge 7 ]; then
@@ -37,6 +38,9 @@ else
   err "Couldn't install rsync and bats on '$TESTVM'."
   exit 1
 fi
+
+# Pause introduced to allow puppet installation/configuration to complete prior to the tests
+sleep 60
 
 # execute the tests in parallel on all test servers
 mkdir -p ${WORKSPACE}/test_results

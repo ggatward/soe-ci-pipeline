@@ -14,6 +14,8 @@ if [[ -z ${PUSH_USER} ]] || [[ -z ${SATELLITE} ]]  || [[ -z ${RSA_ID} ]] \
   exit ${WORKSPACE_ERR}
 fi
 
+# Read in the build environment from the Jenkins job (DEV|PROD)
+BUILDENV=$1
 
 # Get the list of test hosts from the jenkins config DSL file
 function get_dev_vm_list() {
@@ -22,7 +24,18 @@ function get_dev_vm_list() {
   TEST_VM_LIST=( $hostlist )
 }
 
-get_dev_vm_list # Populate TEST_VM_LIST
+function get_prod_vm_list() {
+  hostlist=$(grep -A20 'def prodHosts' ${WORKSPACE}/scripts/jenkins-config/soe_3_prod.groovy \
+    | grep -B20 "]" | grep : | awk -F: '{ print $2 }' | tr -d "\',")
+  TEST_VM_LIST=( $hostlist )
+}
+
+if [ "$BUILDENV" == "PROD" ]; then
+  get_prod_vm_list # Populate TEST_VM_LIST
+else
+  get_dev_vm_list # Populate TEST_VM_LIST
+fi
+
 
 # Error out if no test VM's are available.
 if [ $(echo ${#TEST_VM_LIST[@]}) -eq 0 ]; then
@@ -33,8 +46,7 @@ fi
 # rebuild test VMs
 for I in "${TEST_VM_LIST[@]}"; do
   info "Rebuilding VM ID $I"
-  ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
-        "hammer host update --id $I --build yes"
+  ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} "hammer host update --id $I --build yes"
 
   _PROBED_STATUS=$(ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} "hammer host status --id $I" | grep Power | cut -f2 -d: | tr -d ' ')
 
@@ -51,7 +63,10 @@ for I in "${TEST_VM_LIST[@]}"; do
     poweredOn)
       _STATUS=On
       ;;
-     up)
+    up)
+      _STATUS=On
+      ;;
+    on)
       _STATUS=On
       ;;
     shutoff)
@@ -63,6 +78,9 @@ for I in "${TEST_VM_LIST[@]}"; do
     down)
       _STATUS=Off
       ;;
+    off)
+      _STATUS=Off
+      ;;
     *)
       echo "can not parse power status, please review $0"
   esac
@@ -70,7 +88,7 @@ for I in "${TEST_VM_LIST[@]}"; do
   if [[ ${_STATUS} == 'On' ]]; then
     ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
         "hammer host stop --id $I"
-    sleep 10
+    sleep 30
     ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
         "hammer host start --id $I"
   elif [[ ${_STATUS} == 'Off' ]]; then

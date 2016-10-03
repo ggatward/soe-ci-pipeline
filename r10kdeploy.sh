@@ -21,46 +21,43 @@ rsync --delete -va -e "ssh -l ${PUSH_USER} -i ${RSA_ID}" -va \
 
 # use hammer on the satellite to find all capsules. Then use R10K to push the modules
 # into the puppet environmnet directory on each capsule
-ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
+ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
     "cd /etc/puppet ; r10k deploy environment ${R10K_ENV} -c /var/lib/jenkins/r10k.yaml -pv"
 
 # Clean up extra non-puppet GIT atrefacts that are pulled by r10k
-ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
+ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
     "cd ${BASEDIR}/${R10K_ENV}; rm -rf tests kickstarts LICENSE README.md"
 
 # Need to fix perms post-deploy (Requires entries in /etc/sudoers.d/jenkins on Satellite)
-#ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
+#ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
 #    "sudo /bin/chown -R apache ${BASEDIR}"
-#ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
+#ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
 #    "sudo /usr/sbin/restorecon -Fr ${BASEDIR}"
 
 # Clone the updated directory to all capsules
-for I in $(ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
+for I in $(ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
     "hammer --csv capsule list" | tail -n +2 | awk -F, '{print $2}'); do
   if [ "${I}" != "${SATELLITE}" ]; then
-    echo "*** DEBUG ***"
-    echo "rsync --delete -va -e \"ssh -l ${PUSH_USER} -i ${RSA_ID}\" -va ${BASEDIR}/${R10K_ENV} ${I}:${BASEDIR}"
-#    rsync --delete -va -e "ssh -l ${PUSH_USER} -i ${RSA_ID}" -va ${BASEDIR}/${R10K_ENV} ${I}:${BASEDIR}
+    ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
+       "rsync --delete -va -e \"ssh -q -l ${PUSH_USER} -i ${RSA_ID}\" -va ${BASEDIR}/${R10K_ENV} ${I}:${BASEDIR}"
   fi
 done
 
 
 # See if the environent already exits:
-if [ $(ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
+if [ $(ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
       "hammer environment list | awk ' /^[0-9]/ { print $3 }' | grep -c ${R10K_ENV}") -eq 0 ]; then
-  ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
+  ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
       "hammer environment create --name ${R10K_ENV} --locations '${PUPPET_LOCATIONS}' --organizations ${ORG}"
 else
-  ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
+  ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
       "hammer environment update --name ${R10K_ENV} --locations '${PUPPET_LOCATIONS}' --organizations ${ORG}"
 fi
 
 # Import the puppet classes
-ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
-    "hammer proxy import-classes --id 1 --environment ${R10K_ENV}"
+ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} "hammer proxy import-classes --id 1 --environment ${R10K_ENV}"
 
 # Output to the logs all classes in the env
-ssh -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} \
-    "hammer environment info --name ${R10K_ENV}"
+ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} "hammer environment info --name ${R10K_ENV}"
 
 

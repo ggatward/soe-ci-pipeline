@@ -142,6 +142,8 @@ usermod -a -G apache jenkins
 ```
 * The Satellite/Capsule requires a restart for the updated puppet configuration to take effect.
 
+** NOTE - After upgrading the Satellite version the puppet.conf configuration must be re-applied, as the Satellite upgrade will reset it to defaults **
+
 ### Satellite 6 Capsules
 
 * Create a `jenkins` user on the capsule (OS)

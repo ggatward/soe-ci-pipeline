@@ -135,12 +135,9 @@ usermod -a -G apache jenkins
 ```
 * Modify the `/etc/puppet/puppet.conf` file on the Satellite and Capsules to include the new path in the `environmentpath` parameter in the `[main]` section:  ([master] in Satellite 6.1)
 ```
-[main]
-    ...
-    environmentpath = /etc/puppet/environments:/etc/puppet/r10k/environments
-    ...
+sed -i 's#\senvironmentpath.*# environmentpath  = /etc/puppet/environments:/etc/puppet/r10k/environments#' /etc/puppet/puppet.conf
+katello-service restart
 ```
-* The Satellite/Capsule requires a restart for the updated puppet configuration to take effect.
 
 ** NOTE - After upgrading the Satellite version the puppet.conf configuration must be re-applied, as the Satellite upgrade will reset it to defaults **
 

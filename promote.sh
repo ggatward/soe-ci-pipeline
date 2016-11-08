@@ -45,7 +45,8 @@ tagver=$(( $(echo $tag | cut -f2 -d.) + 1 ))
 echo tagver=$tagver
 TAG="v0.${tagver}"
 
-echo `date '+%H%M%S'` > ${WORKSPACE}/soemaster/version
+# Update the SOE release file with the new version
+sed -i "s/UPS SOEVERSION/UPS $TAG" ${WORKSPACE}/soemaster/kickstarts/snp_CA_Server_SOE-soe_release_file.erb
 
 
 # Commit the changes, push and tag

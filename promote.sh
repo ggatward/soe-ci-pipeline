@@ -46,15 +46,17 @@ echo tagver=$tagver
 TAG="v0.${tagver}"
 
 # Update the SOE release file with the new version
-sed -i "s/UPS SOEVERSION/UPS $TAG" ${WORKSPACE}/soemaster/kickstarts/snp_CA_Server_SOE-soe_release_file.erb
-
+if [ $(grep -c "SOE SOEVERSION" ${WORKSPACE}/soemaster/kickstarts/snp_Server_SOE-soe_release_file.erb) -eq 1 ]; then
+  sed -i "s/SOE SOEVERSION/SOE $TAG" ${WORKSPACE}/soemaster/kickstarts/snp_Server_SOE-soe_release_file.erb
+else
+  sed -i "s/SOE v[0-9]\{0,2\}.[0-9]\{0,3\}/UPS $TAG" ${WORKSPACE}/soemaster/kickstarts/snp_Server_SOE-soe_release_file.erb
+fi
 
 # Commit the changes, push and tag
 git commit -a -m "Automatic promotion initiated by ${BUILD_USER}"
 git push origin HEAD:master
 git tag -a ${TAG} -m "Auto Tag by Jenkins"
 git push origin --tags
-
 
 # Clean out the workspace ready for the push phases
 rm -rf ${WORKSPACE}/soe

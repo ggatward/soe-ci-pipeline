@@ -40,7 +40,7 @@ else
 fi
 
 # Define which host-group the host is in for custom testing
-HOST_GROUP=$(ssh -o StrictHostKeyChecking=no -i ${RSA_ID} root@$TESTVM "grep Group /etc/soe-release" | cut -f1 -d/ | awk '{print $3]')
+HOST_GROUP=$(ssh -o StrictHostKeyChecking=no -i ${RSA_ID} root@$TESTVM "grep Group /etc/soe-release" | cut -f1 -d/ | awk '{print $3}')
 
 # Pause introduced to allow puppet installation/configuration to complete prior to the tests
 sleep 60

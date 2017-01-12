@@ -45,7 +45,7 @@ freeStyleJob('SOE/Production/Promote') {
       }
       branch('development')
       extensions {
-        relativeTargetDir('scripts')
+        relativeTargetDirectory('scripts')
       }
     }
     git {
@@ -54,7 +54,7 @@ freeStyleJob('SOE/Production/Promote') {
       }
       branch('master')
       extensions {
-        relativeTargetDir('soemaster')
+        relativeTargetDirectory('soemaster')
       }
     }
   }
@@ -358,6 +358,9 @@ echo "#####################################################"
         verbose(false)
         showOnlyFailures(false)
         testResults('test_results/*.tap')
+        flattenTapResult(false)
+        stripSingleParents(false)
+        skipIfBuildNotOk(false)
       }
     }
   }

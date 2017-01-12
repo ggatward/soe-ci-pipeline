@@ -46,7 +46,6 @@ freeStyleJob('SOE/SOE_Checkout') {
         url("${CI_GIT_URL}")
       }
       branch('development')
-      createTag(false)
       relativeTargetDir('scripts')
     }
     git {
@@ -54,7 +53,6 @@ freeStyleJob('SOE/SOE_Checkout') {
         url("${SOE_GIT_URL}")
       }
       branch('development')
-      createTag(false)
       relativeTargetDir('soe')
     }
   }

@@ -46,14 +46,18 @@ freeStyleJob('SOE/SOE_Checkout') {
         url("${CI_GIT_URL}")
       }
       branch('development')
-      relativeTargetDir('scripts')
+      extensions {
+        relativeTargetDirectory('scripts')
+      }
     }
     git {
       remote {
         url("${SOE_GIT_URL}")
       }
       branch('development')
-      relativeTargetDir('soe')
+      extensions {
+        relativeTargetDirectory('soe')
+      }
     }
   }
   wrappers {

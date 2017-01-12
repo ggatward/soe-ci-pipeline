@@ -46,7 +46,6 @@ freeStyleJob('SOE/SOE_Checkout') {
         url("${CI_GIT_URL}")
       }
       branch('development')
-      shallowClone(true)
       createTag(false)
       relativeTargetDir('scripts')
     }
@@ -55,7 +54,6 @@ freeStyleJob('SOE/SOE_Checkout') {
         url("${SOE_GIT_URL}")
       }
       branch('development')
-      shallowClone(true)
       createTag(false)
       relativeTargetDir('soe')
     }

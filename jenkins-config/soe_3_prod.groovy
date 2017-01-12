@@ -44,7 +44,6 @@ freeStyleJob('SOE/Production/Promote') {
         url("${CI_GIT_URL}")
       }
       branch('development')
-      shallowClone(true)
       createTag(false)
       relativeTargetDir('scripts')
     }

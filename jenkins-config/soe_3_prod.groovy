@@ -44,14 +44,18 @@ freeStyleJob('SOE/Production/Promote') {
         url("${CI_GIT_URL}")
       }
       branch('development')
-      relativeTargetDir('scripts')
+      extensions {
+        relativeTargetDir('scripts')
+      }
     }
     git {
       remote {
         url("${SOE_GIT_URL}")
       }
       branch('master')
-      relativeTargetDir('soemaster')
+      extensions {
+        relativeTargetDir('soemaster')
+      }
     }
   }
   wrappers {

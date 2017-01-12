@@ -358,6 +358,9 @@ echo "#####################################################"
         verbose(false)
         showOnlyFailures(false)
         testResults('test_results/*.tap')
+	flattenTapResult(false)
+        stripSingleParents(false)
+        skipIfBuildNotOk(false)
       }
     }
   }

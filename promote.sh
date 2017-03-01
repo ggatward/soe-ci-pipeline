@@ -34,7 +34,8 @@ cd ${WORKSPACE}/soemaster
 git merge ${SOE_COMMIT}
 
 # Replace all instances of SOE_dev_ with SOE_ in each .erb file (snippet call entry + snippet names)
-sed -i 's/SOE_dev_/SOE_/g' ${WORKSPACE}/soemaster/kickstarts/*.erb 
+#sed -i 's/SOE_dev_/SOE_/g' ${WORKSPACE}/soemaster/kickstarts/*.erb 
+sed -i 's/dev_Server_SOE/Server_SOE_/g' ${WORKSPACE}/soemaster/kickstarts/*.erb 
 
 # Create version file - read latest git tag, tag+1
 # Read current tag list so we can increment the version

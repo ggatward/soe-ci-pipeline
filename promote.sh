@@ -48,9 +48,9 @@ TAG="v0.${tagver}"
 
 # Update the SOE release file with the new version
 if [ $(grep -c "SOE SOEVERSION" ${WORKSPACE}/soemaster/kickstarts/snp_Server_SOE-soe_release_file.erb) -eq 1 ]; then
-  sed -i "s/SOE SOEVERSION/SOE $TAG" ${WORKSPACE}/soemaster/kickstarts/snp_Server_SOE-soe_release_file.erb
+  sed -i "s/SOE SOEVERSION/SOE $TAG/" ${WORKSPACE}/soemaster/kickstarts/snp_Server_SOE-soe_release_file.erb
 else
-  sed -i "s/SOE v[0-9]\{0,2\}.[0-9]\{0,3\}/UPS $TAG" ${WORKSPACE}/soemaster/kickstarts/snp_Server_SOE-soe_release_file.erb
+  sed -i "s/SOE v[0-9]\{0,2\}.[0-9]\{0,3\}/SOE $TAG/" ${WORKSPACE}/soemaster/kickstarts/snp_Server_SOE-soe_release_file.erb
 fi
 
 # Commit the changes, push and tag

@@ -46,6 +46,8 @@ fi
 # rebuild test VMs
 for I in "${TEST_VM_LIST[@]}"; do
   info "Rebuilding VM ID $I"
+  # Reset the build flag - if it is already yes, set to no first to reset satellite token
+  ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} "hammer host update --id $I --build no"
   ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} "hammer host update --id $I --build yes"
 
   _PROBED_STATUS=$(ssh -q -l ${PUSH_USER} -i ${RSA_ID} ${SATELLITE} "hammer host status --id $I" | grep Power | cut -f2 -d: | tr -d ' ')

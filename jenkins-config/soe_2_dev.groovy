@@ -46,18 +46,18 @@ freeStyleJob('SOE/SOE_Checkout') {
         url("${CI_GIT_URL}")
       }
       branch('development')
-      shallowClone(true)
-      createTag(false)
-      relativeTargetDir('scripts')
+      extensions {
+        relativeTargetDirectory('scripts')
+      }
     }
     git {
       remote {
         url("${SOE_GIT_URL}")
       }
       branch('development')
-      shallowClone(true)
-      createTag(false)
-      relativeTargetDir('soe')
+      extensions {
+        relativeTargetDirectory('soe')
+      }
     }
   }
   wrappers {
@@ -358,6 +358,9 @@ echo "#####################################################"
         verbose(false)
         showOnlyFailures(false)
         testResults('test_results/*.tap')
+	flattenTapResult(false)
+        stripSingleParents(false)
+        skipIfBuildNotOk(false)
       }
     }
   }

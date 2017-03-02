@@ -34,7 +34,8 @@ cd ${WORKSPACE}/soemaster
 git merge ${SOE_COMMIT}
 
 # Replace all instances of SOE_dev_ with SOE_ in each .erb file (snippet call entry + snippet names)
-sed -i 's/SOE_dev_/SOE_/g' ${WORKSPACE}/soemaster/kickstarts/*.erb 
+#sed -i 's/SOE_dev_/SOE_/g' ${WORKSPACE}/soemaster/kickstarts/*.erb 
+sed -i 's/dev_Server_SOE/Server_SOE/g' ${WORKSPACE}/soemaster/kickstarts/*.erb 
 
 # Create version file - read latest git tag, tag+1
 # Read current tag list so we can increment the version
@@ -45,15 +46,18 @@ tagver=$(( $(echo $tag | cut -f2 -d.) + 1 ))
 echo tagver=$tagver
 TAG="v0.${tagver}"
 
-echo `date '+%H%M%S'` > ${WORKSPACE}/soemaster/version
-
+# Update the SOE release file with the new version
+if [ $(grep -c "SOE SOEVERSION" ${WORKSPACE}/soemaster/kickstarts/snp_Server_SOE-soe_release_file.erb) -eq 1 ]; then
+  sed -i "s/SOE SOEVERSION/SOE $TAG" ${WORKSPACE}/soemaster/kickstarts/snp_Server_SOE-soe_release_file.erb
+else
+  sed -i "s/SOE v[0-9]\{0,2\}.[0-9]\{0,3\}/UPS $TAG" ${WORKSPACE}/soemaster/kickstarts/snp_Server_SOE-soe_release_file.erb
+fi
 
 # Commit the changes, push and tag
 git commit -a -m "Automatic promotion initiated by ${BUILD_USER}"
 git push origin HEAD:master
 git tag -a ${TAG} -m "Auto Tag by Jenkins"
 git push origin --tags
-
 
 # Clean out the workspace ready for the push phases
 rm -rf ${WORKSPACE}/soe

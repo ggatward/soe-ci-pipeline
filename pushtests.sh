@@ -39,14 +39,22 @@ else
   exit 1
 fi
 
+# Define which host-group the host is in for custom testing
+HOST_GROUP=$(ssh -o StrictHostKeyChecking=no -i ${RSA_ID} root@$TESTVM "grep Group /etc/soe-release" | cut -f1 -d/ | awk '{print $3}')
+
 # Pause introduced to allow puppet installation/configuration to complete prior to the tests
 sleep 60
 
 # execute the tests in parallel on all test servers
 mkdir -p ${WORKSPACE}/test_results
 info "Starting TAPS tests on test server $TESTVM"
-ssh -o StrictHostKeyChecking=no -i ${RSA_ID} root@$TESTVM \
-  'cd tests ; bats -t *.bats' > ${WORKSPACE}/test_results/$TESTVM.tap &
+if [ -z "${HOST_GROUP}" ]; then
+  ssh -o StrictHostKeyChecking=no -i ${RSA_ID} root@$TESTVM \
+    'cd tests ; bats -t *.bats' > ${WORKSPACE}/test_results/$TESTVM.tap &
+else
+  ssh -o StrictHostKeyChecking=no -i ${RSA_ID} root@$TESTVM \
+    "cd tests ; bats -t *.bats ${HOST_GROUP}/*.bats" > ${WORKSPACE}/test_results/$TESTVM.tap &
+fi
 
 # wait until all backgrounded processes have exited
 wait

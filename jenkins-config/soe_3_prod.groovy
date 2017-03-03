@@ -43,7 +43,7 @@ freeStyleJob('SOE/Production/Promote') {
       remote {
         url("${CI_GIT_URL}")
       }
-      branch('development')
+      branch('master')
       extensions {
         relativeTargetDirectory('scripts')
       }

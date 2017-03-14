@@ -1,5 +1,5 @@
 ORG=GatwardIT
-SATELLITE=sat62.home.gatwards.org
+SATELLITE=sat62.core.home.gatwards.org
 PUPPET_LOCATIONS=Home
 
 KNOWN_HOSTS=/var/lib/jenkins/.ssh/known_hosts

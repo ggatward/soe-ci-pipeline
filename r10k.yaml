@@ -3,7 +3,7 @@
 :sources:
   :RHEL_SOE:
     remote: https://github.com/ggatward/RHEL-SOE
-    basedir: /etc/puppet/r10k/SOE
+    basedir: /etc/puppet/r10k/SOE/environments
     prefix: true
 #git:
 #  private_key: /var/lib/jenkins/.ssh/id_rsa
